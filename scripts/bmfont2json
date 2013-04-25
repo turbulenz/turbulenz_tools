@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+# Copyright (c) 2011-2013 Turbulenz Limited
+"""
+Convert Bitmap Font Generator data (.fnt) files into a Turbulenz JSON asset.
+http://www.angelcode.com/products/bmfont/
+"""
+
+from turbulenz_tools.tools.bmfont2json import main
+
+if __name__ == "__main__":
+    main()

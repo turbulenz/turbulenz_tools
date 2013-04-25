@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# Copyright (c) 2012-2013 Turbulenz Limited
+"""
+Export event logs and anonymised user information of a game.
+"""
+
+from turbulenz_tools.tools.exportevents import main
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# Copyright (c) 2012-2013 Turbulenz Limited
+"""
+Report metrics on JSON asset files.
+"""
+
+from turbulenz_tools.tools.json2stats import main
+
+if __name__ == "__main__":
+    exit(main())

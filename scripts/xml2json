@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# Copyright (c) 2011-2013 Turbulenz Limited
+"""
+Convert XML assets into a structured JSON asset.
+"""
+
+from turbulenz_tools.tools.xml2json import main
+
+if __name__ == "__main__":
+    main()

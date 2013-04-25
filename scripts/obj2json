@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# Copyright (c) 2009-2011,2013 Turbulenz Limited
+"""
+Convert Wavefront (.obj) files into a Turbulenz JSON asset.
+"""
+
+from turbulenz_tools.tools.stdtool import standard_main
+from turbulenz_tools.tools.obj2json import parse, __version__, __dependencies__
+
+if __name__ == "__main__":
+    standard_main(parse, __version__,
+                  "Convert Wavefront (.obj) files into a Turbulenz JSON asset.",
+                  __dependencies__)

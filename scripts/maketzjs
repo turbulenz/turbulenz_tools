@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# Copyright (c) 2011-2013 Turbulenz Limited
+"""
+Convert js and html files into Turbulenz apps
+"""
+
+from turbulenz_tools.tools.maketzjs import main
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# Copyright (c) 2012-2013 Turbulenz Limited
+"""
+Operate on Turbulenz JSON assets.
+"""
+
+from turbulenz_tools.tools.json2json import main
+
+if __name__ == "__main__":
+    exit(main())
