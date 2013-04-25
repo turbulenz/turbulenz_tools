@@ -8,19 +8,19 @@ users.
 Maintainers
 ===========
 
-| Blake Maltby <blakemaltby@turbulenz.biz> @81sh0p
-| David Galeano <davidgaleano@turbulenz.biz> @davidgaleano
-| James Austin <jamesaustin@turbulenz.biz> @james_austin
-| Ian Ballantyne <ianballantyne@turbulenz.biz> @IanBallantyne
-| David Fooks <davidfooks@turbulenz.biz>
+| Blake Maltby <blakemaltby@turbulenz.com> @81sh0p
+| David Galeano <davidgaleano@turbulenz.com> @davidgaleano
+| James Austin <jamesaustin@turbulenz.com> @james_austin
+| Ian Ballantyne <ianballantyne@turbulenz.com> @IanBallantyne
+| David Fooks <davidfooks@turbulenz.com>
 
 Contributors
 ============
 
-| Duncan Tebbs <duncantebbs@turbulenz.biz>
-| James Long <jameslong@turbulenz.biz>
-| Jan Borchers <janborchers@turbulenz.biz>
-| Joe Kilner <joekilner@turbulenz.biz> @Dr3Daemon
-| Michael Braithwaite <michaelbraithwaite@turbulenz.biz>
+| Duncan Tebbs <duncantebbs@turbulenz.com>
+| James Long <jameslong@turbulenz.com>
+| Jan Borchers <janborchers@turbulenz.com>
+| Joe Kilner <joekilner@turbulenz.com> @Dr3Daemon
+| Michael Braithwaite <michaelbraithwaite@turbulenz.com>
 | Sheheryar Zakaria
-| Simon Moore <simonmoore@turbulenz.biz> @SimonMoore10
+| Simon Moore <simonmoore@turbulenz.com> @SimonMoore10
