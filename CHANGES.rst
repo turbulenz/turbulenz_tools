@@ -9,7 +9,7 @@ Turbulenz Python Tools Changes
 
 1.0
 ===
-:release-date: 2013-04-20
+:release-date: 2013-05-02
 
 .. _v1.0-changes:
 
