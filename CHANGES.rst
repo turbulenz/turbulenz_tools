@@ -11,6 +11,9 @@ Turbulenz Python Tools Changes
 -------
 
 2013-05-17
+  - Fix exportevents tool when working with encrypted data stored in the local filesystem
+
+2013-05-17
   - Update exportevents tool to support gzipped responses for efficient download of user metrics
 
 
