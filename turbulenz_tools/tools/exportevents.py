@@ -238,9 +238,10 @@ def _request_data(options):
     cookie = login(connection, options)
 
     try:
-        r = connection.request('POST',
+        r = connection.request('GET',
                                DATATYPE_URL[options.datatype] % options.project,
-                               headers={'Cookie': cookie},
+                               headers={'Cookie': cookie,
+                                        'Accept-Encoding': 'gzip'},
                                fields=params,
                                redirect=False)
     except (HTTPError, SSLError) as e:
