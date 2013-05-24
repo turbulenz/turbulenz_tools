@@ -365,6 +365,10 @@ class Obj2json(Mesh):
                     need_normals.add(shape_name)
                     # Same reasoning as with generating tangents
                     generate_normals = generate_normals or not len(self.normals)
+        if generate_tangents and 0 == len(self.uvs[0]):
+            LOG.debug("Can't generate nbts without uvs:%i"% (len(self.uvs[0])))
+            generate_tangents = False
+            need_tangents     = set()
         return (need_normals, generate_normals, need_tangents, generate_tangents)
 # pylint: enable=R0904
 
