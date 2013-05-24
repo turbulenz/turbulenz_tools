@@ -17,7 +17,7 @@ from node import NodeName
 from os.path import basename
 # pylint: enable=W0403
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 __dependencies__ = ['asset2json', 'mesh', 'node', 'vmath']
 
 
@@ -386,7 +386,7 @@ def parse(input_filename="default.obj", output_filename="default.json", asset_ur
         # Generate primitives
         asset.unpack_vertices()
         # Remove any degenerate primitives unless they're requested to be kept
-        keep_degenerates = False
+        keep_degenerates = True
         for shape in asset.shapes:
             for _, surface in asset.shapes[shape].surfaces.iteritems():
                 material = definitions_asset.retrieve_material(surface.material_name)
