@@ -587,7 +587,9 @@ def main():
                 logs_url = r_data['logs_url']
                 files_list = r_data['files_list']
                 array_files_list = r_data['array_files_list']
-                enc_key = urlsafe_b64decode(r_data['key'])
+                enc_key = r_data['key']
+                if enc_key is not None:
+                    enc_key = urlsafe_b64decode(enc_key)
                 today_log = r_data['today_log']
         except KeyError as e:
             error('Missing information in response: %s' % e)
