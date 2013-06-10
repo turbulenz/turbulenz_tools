@@ -16,7 +16,6 @@ from os import mkdir
 from os.path import exists as path_exists, join as path_join, normpath
 from getpass import getpass, GetPassWarning
 from base64 import urlsafe_b64decode
-from Crypto.Cipher.AES import new as aes_new, MODE_CBC
 
 from turbulenz_tools.tools.stdtool import standard_output_version
 
@@ -310,27 +309,54 @@ def write_to_file(options, data, filename=None, output_path=None, force_overwrit
         exit(-1)
 
 
-def decrypt_data(data, key):
-    # Need to use a key of length 32 bytes for AES-256
-    if len(key) != 32:
-        error('Invalid key length for AES-256')
-        exit(-1)
+try:
+    from Crypto.Cipher.AES import new as aes_new, MODE_CBC
 
-    # IV is last 16 bytes
-    iv = data[-16 :]
-    data = data[: -16]
+    def decrypt_data(data, key):
+        # Need to use a key of length 32 bytes for AES-256
+        if len(key) != 32:
+            error('Invalid key length for AES-256')
+            exit(-1)
 
-    data = aes_new(key, MODE_CBC, iv).decrypt(data)
+        # IV is last 16 bytes
+        iv = data[-16 :]
+        data = data[: -16]
 
-    # Strip PKCS7 padding required for CBC
-    if len(data) % 16:
-        error('Corrupted data - invalid length')
-        exit(-1)
-    num_padding = ord(data[-1])
-    if num_padding > 16:
-        error('Corrupted data - invalid padding')
-        exit(-1)
-    return data[: -num_padding]
+        data = aes_new(key, MODE_CBC, iv).decrypt(data)
+
+        # Strip PKCS7 padding required for CBC
+        if len(data) % 16:
+            error('Corrupted data - invalid length')
+            exit(-1)
+        num_padding = ord(data[-1])
+        if num_padding > 16:
+            error('Corrupted data - invalid padding')
+            exit(-1)
+
+        return data[: -num_padding]
+
+except ImportError:
+    from io import BytesIO
+    from subprocess import Popen, STDOUT, PIPE
+    from struct import pack
+
+    def decrypt_data(data, key):
+        # Need to use a key of length 32 bytes for AES-256
+        if len(key) != 32:
+            error('Invalid key length for AES-256')
+            exit(-1)
+
+        aesdata = BytesIO()
+        aesdata.write(key)
+        aesdata.write(pack('I', len(data)))
+        aesdata.write(data)
+        process = Popen('aesdecrypt', stderr=STDOUT, stdout=PIPE, stdin=PIPE, shell=True)
+        output, _ = process.communicate(input=aesdata.getvalue())
+        retcode = process.poll()
+        if retcode != 0:
+            error('Failed to run aesdecrypt, check it is on the path or install PyCrypto')
+            exit(-1)
+        return str(output)
 
 
 def get_log_files_local(options, files_list, enc_key):
