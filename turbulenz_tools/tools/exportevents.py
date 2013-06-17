@@ -238,9 +238,10 @@ def _request_data(options):
     cookie = login(connection, options)
 
     try:
-        r = connection.request('POST',
+        r = connection.request('GET',
                                DATATYPE_URL[options.datatype] % options.project,
-                               headers={'Cookie': cookie},
+                               headers={'Cookie': cookie,
+                                        'Accept-Encoding': 'gzip'},
                                fields=params,
                                redirect=False)
     except (HTTPError, SSLError) as e:
@@ -587,6 +588,8 @@ def main():
                 files_list = r_data['files_list']
                 array_files_list = r_data['array_files_list']
                 enc_key = r_data['key']
+                if enc_key is not None:
+                    enc_key = urlsafe_b64decode(enc_key)
                 today_log = r_data['today_log']
         except KeyError as e:
             error('Missing information in response: %s' % e)
@@ -614,7 +617,6 @@ def main():
             connection = None
             if logs_url and (files_list or array_files_list):
                 connection = connection_from_url(logs_url, timeout=8.0)
-                enc_key = urlsafe_b64decode(enc_key)
 
             if files_list:
                 if logs_url:

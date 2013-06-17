@@ -17,7 +17,7 @@ from node import NodeName
 from os.path import basename
 # pylint: enable=W0403
 
-__version__ = '1.2.0'
+__version__ = '1.2.2'
 __dependencies__ = ['asset2json', 'mesh', 'node', 'vmath']
 
 
@@ -263,10 +263,17 @@ class Obj2json(Mesh):
         """Unpack the vertices."""
         # Consecutive list of nodes making up faces (specifically, triangles)
         indices = []
+
+        num_components = 1
+        if 0 < len(self.uvs[0]):
+            num_components += 1
+        if 0 < len(self.normals):
+            num_components += 1
+
         # A node of a face definition consists of a vertex index, and optional
         # texture coord index and an optional normal vector index
         # Thus, the length of an element of self.indices can be 1, 2 or 3.
-        if len(self.indices[0]) == 1:
+        if num_components == 1:
             # No texture coordinates (uv) or normal vector specified.
             indices = [x[0] for x in self.indices]
         else:
@@ -277,33 +284,47 @@ class Obj2json(Mesh):
             uvs = []        # Texture coordinate
             normals = []
             mapping = {}
-            if len(self.indices[0]) == 2:
+            if num_components == 2:
                 for indx in self.indices:
-                    hash_string = "%x:%x" % (indx[0], indx[1])
+                    i0 = indx[0]
+                    if len(indx) >= 2:
+                        i1 = indx[1]
+                    else:
+                        i1 = 0
+                    hash_string = "%x:%x" % (i0, i1)
                     if hash_string in mapping:
                         indices.append(mapping[hash_string])
                     else:
                         newindx = len(positions)
                         mapping[hash_string] = newindx
                         indices.append(newindx)
-                        positions.append(old_positions[indx[0]])
+                        positions.append(old_positions[i0])
                         # Figure out whether 2nd value is uv or normal
                         if len(old_uvs) != 0:
-                            uvs.append(old_uvs[indx[1]])
+                            uvs.append(old_uvs[i1])
                         else:
-                            normals.append(old_normals[indx[1]])
+                            normals.append(old_normals[i1])
             else:
                 for indx in self.indices:
-                    hash_string = "%x:%x:%x" % (indx[0], indx[1], indx[2])
+                    i0 = indx[0]
+                    if len(indx) >= 2:
+                        i1 = indx[1]
+                    else:
+                        i1 = 0
+                    if len(indx) >= 3:
+                        i2 = indx[2]
+                    else:
+                        i2 = 0
+                    hash_string = "%x:%x:%x" % (i0, i1, i2)
                     if hash_string in mapping:
                         indices.append(mapping[hash_string])
                     else:
                         newindx = len(positions)
                         mapping[hash_string] = newindx
                         indices.append(newindx)
-                        positions.append(old_positions[indx[0]])
-                        uvs.append(old_uvs[indx[1]])
-                        normals.append(old_normals[indx[2]])
+                        positions.append(old_positions[i0])
+                        uvs.append(old_uvs[i1])
+                        normals.append(old_normals[i2])
             # Reassign the vertex positions, texture coordinates and normals, so
             # that they coincide with the indices defining the triangles.
             self.positions = positions
@@ -344,6 +365,10 @@ class Obj2json(Mesh):
                     need_normals.add(shape_name)
                     # Same reasoning as with generating tangents
                     generate_normals = generate_normals or not len(self.normals)
+        if generate_tangents and 0 == len(self.uvs[0]):
+            LOG.debug("Can't generate nbts without uvs:%i"% (len(self.uvs[0])))
+            generate_tangents = False
+            need_tangents     = set()
         return (need_normals, generate_normals, need_tangents, generate_tangents)
 # pylint: enable=R0904
 
@@ -361,7 +386,7 @@ def parse(input_filename="default.obj", output_filename="default.json", asset_ur
         # Generate primitives
         asset.unpack_vertices()
         # Remove any degenerate primitives unless they're requested to be kept
-        keep_degenerates = False
+        keep_degenerates = True
         for shape in asset.shapes:
             for _, surface in asset.shapes[shape].surfaces.iteritems():
                 material = definitions_asset.retrieve_material(surface.material_name)
