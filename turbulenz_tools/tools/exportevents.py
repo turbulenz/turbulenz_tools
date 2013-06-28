@@ -3,23 +3,22 @@
 
 from logging import basicConfig, CRITICAL, INFO, WARNING
 
-from optparse import OptionParser, TitledHelpFormatter
+import argparse
 from urllib3 import connection_from_url
 from urllib3.exceptions import HTTPError, SSLError
 from simplejson import loads as json_loads, dump as json_dump
 from gzip import GzipFile
 from zlib import decompress as zlib_decompress
-from time import strptime, strftime, gmtime, mktime
+from time import strptime, strftime, gmtime, localtime
+from calendar import timegm
 from re import compile as re_compile
-from sys import stdin
+from sys import stdin, argv
 from os import mkdir
 from os.path import exists as path_exists, join as path_join, normpath
 from getpass import getpass, GetPassWarning
 from base64 import urlsafe_b64decode
 
-from turbulenz_tools.tools.stdtool import standard_output_version
-
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 __dependencies__ = []
 
 
@@ -30,14 +29,65 @@ DATATYPE_DEFAULT = 'events'
 DATATYPE_URL = { 'events': '/dynamic/project/%s/event-log',
                  'users': '/dynamic/project/%s/user-info' }
 
-DATE_FORMAT = '%Y-%m-%d'
-DATERANGE_DEFAULT = strftime(DATE_FORMAT, gmtime())
 DAY = 86400
+TODAY_START = (timegm(gmtime()) / DAY) * DAY
 
 # pylint: disable=C0301
 USERNAME_PATTERN = re_compile('^[a-z0-9]+[a-z0-9-]*$') # usernames
 PROJECT_SLUG_PATTERN = re_compile('^[a-zA-Z0-9\-]*$') # game
 # pylint: enable=C0301
+
+class DateRange:
+    def __init__(self, start=TODAY_START, end=None):
+        self.start = start
+        if end:
+            self.end = end
+        else:
+            self.end = start + DAY
+        if self.start > self.end:
+            raise ValueError('Start date can\'t be greater than the end date')
+
+        def _range_str(t):
+            if t % DAY:
+                return strftime('%Y-%m-%d %H:%M:%SZ', gmtime(t))
+            else:
+                return strftime('%Y-%m-%d', gmtime(t))
+        self.start_str = _range_str(self.start)
+        if self.end % DAY:
+            self.end_str = _range_str(self.end)
+        else:
+            self.end_str = _range_str(self.end - DAY)
+
+
+    def filename_str(self):
+        if self.start_str == self.end_str:
+            return self.start_str
+        else:
+            result = '%s_-_%s' % (self.start_str, self.end_str)
+            return result.replace(' ', '_').replace(':', '-')
+
+    @staticmethod
+    def parse(range_str):
+        date_format = '%Y-%m-%d'
+        range_parts = range_str.split(':')
+
+        if len(range_parts) < 1:
+            error('Date not set')
+            exit(1)
+        elif len(range_parts) > 2:
+            error('Can\'t provide more than two dates for date range')
+            exit(1)
+
+        try:
+            start = int(timegm(strptime(range_parts[0], date_format)))
+            end = None
+            if len(range_parts) == 2:
+                end = int(timegm(strptime(range_parts[1], date_format))) + DAY
+        except ValueError:
+            error('Dates must be in the yyyy-mm-dd format')
+            exit(1)
+
+        return DateRange(start, end)
 
 
 def log(message, new_line=True):
@@ -52,74 +102,47 @@ def warning(message):
     log('[WARNING] - %s' % message)
 
 
-def _create_parser():
-    usage = "usage: %prog [options] project"
-    parser = OptionParser(description='Export event logs and anonymised user information of a game.',
-                          usage=usage, formatter=TitledHelpFormatter())
+def _parse_args():
+    parser = argparse.ArgumentParser(description="Export event logs and anonymised user information of a game.")
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")
+    parser.add_argument("-s", "--silent", action="store_true", help="silent running")
+    parser.add_argument("--version", action='version', version=__version__)
 
-    parser.add_option("--version", action="store_true", dest="output_version", default=False,
-                      help="output version number")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="verbose output")
-    parser.add_option("-s", "--silent", action="store_true", dest="silent", default=False, help="silent running")
+    parser.add_argument("-u", "--user", action="store",
+                        help="Hub login username (will be requested if not provided)")
+    parser.add_argument("-p", "--password", action="store",
+                        help="Hub login password (will be requested if not provided)")
 
-    parser.add_option("-u", "--user", action="store", dest="user",
-                      help="Hub login username (will be requested if not provided)")
-    parser.add_option("-p", "--password", action="store", dest="password",
-                      help="Hub login password (will be requested if not provided)")
+    parser.add_argument("-t", "--type", action="store", default=DATATYPE_DEFAULT,
+                        help="type of data to download, either events or users (defaults to " + DATATYPE_DEFAULT + ")")
+    parser.add_argument("-d", "--daterange", action="store", default=TODAY_START,
+                        help="individual 'yyyy-mm-dd' or range 'yyyy-mm-dd : yyyy-mm-dd' of dates to get the data " \
+                             "for (defaults to today)")
+    parser.add_argument("-o", "--outputdir", action="store", default="",
+                        help="folder to output the downloaded files to (defaults to current directory)")
 
-    parser.add_option("-t", "--type", action="store", dest="datatype", default=DATATYPE_DEFAULT,
-                      help="type of data to download, either events or users (defaults to " + DATATYPE_DEFAULT + ")")
-    parser.add_option("-d", "--daterange", action="store", dest="daterange", default=DATERANGE_DEFAULT,
-                      help="individual 'yyyy-mm-dd' or range 'yyyy-mm-dd : yyyy-mm-dd' of dates to get the data for " \
-                           "(defaults to today)")
-    parser.add_option("-o", "--outputdir", action="store", dest="outputdir",
-                      help="folder to output the downloaded files to (defaults to current directory)")
-    #use json2json for this
-    #parser.add_option("-m", "--merge", action="store", dest="outputfilename",
-    #                  help="if the data to be downloaded is across multiple files, merge it into one file")
+    parser.add_argument("-w", "--overwrite", action="store_true",
+                        help="if a file to be downloaded exists in the output directory, " \
+                             "overwrite instead of skipping it")
+    parser.add_argument("--indent", action="store_true", help="apply indentation to the JSON output")
+    parser.add_argument("--hub", default=HUB_URL, help="Hub url (defaults to https://hub.turbulenz.com/)")
 
-    parser.add_option("-w", "--overwrite", action="store_true", dest="overwrite", default=False,
-                      help="if a file to be downloaded exists in the output directory, " \
-                           "overwrite instead of skipping it")
+    parser.add_argument("project", metavar='project_slug', help="Slug of Hub project you wish to download from")
 
-    parser.add_option("--indent", action="store_true", dest="indent", default=False,
-                      help="apply indentation to the JSON output")
+    args = parser.parse_args(argv[1:])
 
-    parser.add_option("--hub", action="store", dest="hub", default=HUB_URL,
-                      help="Hub url (defaults to https://hub.turbulenz.com/)")
-
-    return parser
-
-
-def _check_options():
-    parser = _create_parser()
-    (options, args) = parser.parse_args()
-
-    if options.output_version:
-        standard_output_version(__version__, __dependencies__, None)
-        exit(0)
-
-    if options.silent:
+    if args.silent:
         basicConfig(level=CRITICAL)
-    elif options.verbose:
+    elif args.verbose:
         basicConfig(level=INFO)
     else:
         basicConfig(level=WARNING)
 
-    if 0 == len(args):
-        error('Hub project required')
-        exit(1)
-    if 1 < len(args):
-        error('Too many arguments. Please provide the slug of the project you wish to download from')
-        exit(1)
-    project = args[0]
-    options.project = project
-
-    if not PROJECT_SLUG_PATTERN.match(project):
+    if not PROJECT_SLUG_PATTERN.match(args.project):
         error('Incorrect "project" format')
         exit(-1)
 
-    username = options.user
+    username = args.user
     if not username:
         print 'Username: ',
         username = stdin.readline()
@@ -127,52 +150,29 @@ def _check_options():
             error('Login information required')
             exit(-1)
         username = username.strip()
-        options.user = username
+        args.user = username
 
     if not USERNAME_PATTERN.match(username):
         error('Incorrect "username" format')
         exit(-1)
 
-    if not options.password:
+    if not args.password:
         try:
-            options.password = getpass()
+            args.password = getpass()
         except GetPassWarning:
             error('Echo free password entry unsupported. Please provide a --password argument')
             return -1
 
-    if options.datatype not in ['events', 'users']:
+    if args.type not in ['events', 'users']:
         error('Type must be one of \'events\' or \'users\'')
         exit(1)
 
-    daterange = options.daterange.replace(':', ' ').split()
+    if isinstance(args.daterange, int):
+        args.daterange = DateRange(args.daterange)
+    else:
+        args.daterange = DateRange.parse(args.daterange)
 
-    if len(daterange) < 1:
-        error('Date not set')
-        exit(1)
-    elif len(daterange) > 2:
-        error('Can\'t provide more than two dates for date range')
-        exit(1)
-
-    try:
-        for d in daterange:
-            strptime(d, DATE_FORMAT)
-    except ValueError:
-        error('Dates must be in the yyyy-mm-dd format')
-        exit(1)
-
-    if daterange[0] > daterange[-1]:
-        error('Start date can\'t be greater than the end date')
-        exit(1)
-
-    options.daterange = daterange
-
-    if not options.hub:
-        options.hub = 'http://127.0.0.1:8080'
-
-    if not options.outputdir:
-        options.outputdir = ''
-
-    return options
+    return args
 
 
 def login(connection, options):
@@ -229,8 +229,8 @@ def logout(connection, cookie):
 
 def _request_data(options):
     daterange = options.daterange
-    params = { 'start_time': int(mktime(strptime(daterange[0] + ' GMT', DATE_FORMAT + ' %Z'))),
-               'end_time': int(mktime(strptime(daterange[-1] + ' GMT', DATE_FORMAT + ' %Z'))),
+    params = { 'start_time': daterange.start,
+               'end_time': daterange.end,
                'version': __version__ }
 
     connection = connection_from_url(options.hub, timeout=8.0)
@@ -238,7 +238,7 @@ def _request_data(options):
 
     try:
         r = connection.request('GET',
-                               DATATYPE_URL[options.datatype] % options.project,
+                               DATATYPE_URL[options.type] % options.project,
                                headers={'Cookie': cookie,
                                         'Accept-Encoding': 'gzip'},
                                fields=params,
@@ -269,13 +269,7 @@ def _request_data(options):
 
 def write_to_file(options, data, filename=None, output_path=None, force_overwrite=False):
     if not filename:
-        start_date = options.daterange[0]
-        end_date = options.daterange[-1]
-
-        filename = '%s-%s-%s' % (options.project, options.datatype, start_date)
-        if start_date != end_date:
-            filename += '_-_' + end_date
-        filename += '.json'
+        filename = '%s-%s-%s.json' % (options.project, options.type, options.daterange.filename_str())
 
     try:
         if not output_path:
@@ -557,7 +551,7 @@ def inline_array_events_s3(options, today_log, array_files_list, enc_key, connec
 
 
 def patch_and_write_today_log(options, today_log, array_files_list, enc_key, connection):
-    filename = '%s-%s-%s.json' % (options.project, options.datatype, options.daterange[-1])
+    filename = '%s-%s-%s.json' % (options.project, options.type, options.daterange.end_str.replace(' ', '_'))
 
     output_path = normpath(path_join(options.outputdir, filename))
     if not options.overwrite and path_exists(output_path):
@@ -595,18 +589,18 @@ def patch_and_write_today_log(options, today_log, array_files_list, enc_key, con
 
 # pylint: disable=E1103
 def main():
-    options = _check_options()
+    options = _parse_args()
 
     silent = options.silent
     if not silent:
-        log('Downloading \'%s\' to %s.' % (options.datatype, options.outputdir or 'current directory'))
+        log('Downloading \'%s\' to %s.' % (options.type, options.outputdir or 'current directory'))
 
     try:
         r_data = _request_data(options)
         try:
-            start_date = strftime('%Y-%m-%d', gmtime(r_data['start_time']))
-            end_date = strftime('%Y-%m-%d', gmtime(r_data['end_time']))
-            datatype = options.datatype
+            response_daterange = DateRange(r_data['start_time'], r_data['end_time'])
+
+            datatype = options.type
             if 'users' == datatype:
                 user_data = r_data['user_data']
             else: # if 'events' == datatype
@@ -624,12 +618,13 @@ def main():
 
         daterange = options.daterange
         if not silent:
-            if start_date != daterange[0]:
-                warning('Start date used (%s) not the same as what was specified (%s)' % (start_date, daterange[0]))
-                options.daterange[0] = start_date
-            if end_date != daterange[-1]:
-                warning('End date used (%s) not the same as what was specified (%s)' % (end_date, daterange[-1]))
-                options.daterange[1] = end_date
+            if response_daterange.start != daterange.start:
+                warning('Start date used (%s) not the same as what was specified (%s)' % \
+                        (response_daterange.start_str, daterange.start_str))
+            if response_daterange.end != daterange.end:
+                warning('End date used (%s) not the same as what was specified (%s)' % \
+                        (response_daterange.end_str, daterange.end_str))
+            options.daterange = response_daterange
 
         output_dir = options.outputdir
         if output_dir and not path_exists(output_dir):
@@ -651,7 +646,7 @@ def main():
                     get_log_files_local(options, files_list, enc_key)
                 del files_list
 
-            if end_date == DATERANGE_DEFAULT:   # today
+            if response_daterange.end >= TODAY_START:
                 # Patch and write, if requested, today's log with the array events downloaded and inlined
                 patch_and_write_today_log(options, today_log, array_files_list, enc_key, connection)
                 del today_log
