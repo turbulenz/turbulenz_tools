@@ -615,7 +615,8 @@ def main():
                 array_files_list = r_data['array_files_list']
                 enc_key = r_data['key']
                 if enc_key is not None:
-                    enc_key = urlsafe_b64decode(enc_key)
+                    # enc_key can be a unicode string and we need a stream of ascii bytes
+                    enc_key = urlsafe_b64decode(enc_key.encode('ascii'))
                 today_log = r_data['today_log']
         except KeyError as e:
             error('Missing information in response: %s' % e)
