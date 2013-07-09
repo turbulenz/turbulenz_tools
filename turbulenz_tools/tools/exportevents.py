@@ -9,7 +9,7 @@ from urllib3.exceptions import HTTPError, SSLError
 from simplejson import loads as json_loads, dump as json_dump
 from gzip import GzipFile
 from zlib import decompress as zlib_decompress
-from time import strptime, strftime, gmtime, localtime
+from time import strptime, strftime, gmtime
 from calendar import timegm
 from re import compile as re_compile
 from sys import stdin, argv
@@ -18,7 +18,7 @@ from os.path import exists as path_exists, join as path_join, normpath
 from getpass import getpass, GetPassWarning
 from base64 import urlsafe_b64decode
 
-__version__ = '2.0.1'
+__version__ = '2.1.0'
 __dependencies__ = []
 
 
@@ -38,6 +38,8 @@ PROJECT_SLUG_PATTERN = re_compile('^[a-zA-Z0-9\-]*$') # game
 # pylint: enable=C0301
 
 class DateRange:
+    """Maintain a time range between two dates. If only a start time is given it will generate a 24 hour period
+       starting at that time. Defaults to the start of the current day if no times are given"""
     def __init__(self, start=TODAY_START, end=None):
         self.start = start
         if end:
