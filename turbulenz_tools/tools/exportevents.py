@@ -64,6 +64,10 @@ class DateRange:
     def filename_str(self):
         if self.start_str == self.end_str:
             return self.start_str
+        elif int(self.start / DAY) == int(self.end / DAY):
+            result = '%s_-_%s' % (strftime('%Y-%m-%d %H:%M:%SZ', gmtime(self.start)),
+                                  strftime('%Y-%m-%d %H:%M:%SZ', gmtime(self.end)))
+            return result.replace(' ', '_').replace(':', '-')
         else:
             result = '%s_-_%s' % (self.start_str, self.end_str)
             return result.replace(' ', '_').replace(':', '-')
@@ -306,7 +310,9 @@ def write_to_file(options, data, filename=None, output_path=None, force_overwrit
 
 
 try:
+    # pylint: disable=F0401
     from Crypto.Cipher.AES import new as aes_new, MODE_CBC
+    # pylint: enable=F0401
 
     def decrypt_data(data, key):
         # Need to use a key of length 32 bytes for AES-256
@@ -552,8 +558,9 @@ def inline_array_events_s3(options, today_log, array_files_list, enc_key, connec
         exit(-1)
 
 
-def patch_and_write_today_log(options, today_log, array_files_list, enc_key, connection):
-    filename = '%s-%s-%s.json' % (options.project, options.type, options.daterange.end_str.replace(' ', '_'))
+def patch_and_write_today_log(options, resp_daterange, today_log, array_files_list, enc_key, connection):
+    today_range = DateRange(int(resp_daterange.end / DAY) * DAY, int(resp_daterange.end))
+    filename = '%s-%s-%s.json' % (options.project, options.type, today_range.filename_str())
 
     output_path = normpath(path_join(options.outputdir, filename))
     if not options.overwrite and path_exists(output_path):
@@ -648,9 +655,9 @@ def main():
                     get_log_files_local(options, files_list, enc_key)
                 del files_list
 
-            if response_daterange.end >= TODAY_START:
+            if response_daterange.end > TODAY_START:
                 # Patch and write, if requested, today's log with the array events downloaded and inlined
-                patch_and_write_today_log(options, today_log, array_files_list, enc_key, connection)
+                patch_and_write_today_log(options, response_daterange, today_log, array_files_list, enc_key, connection)
                 del today_log
                 del array_files_list
 
