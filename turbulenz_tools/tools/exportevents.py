@@ -467,33 +467,43 @@ def inline_array_events_local(options, today_log, array_files_list, enc_key):
     to_sort = set()
 
     try:
+        index = 0
         for index, filename in enumerate(array_files_list):
             # Format: 'eventlogspath/gamefolder/arrayevents/date(seconds)/objectid.bin'
             # The objectid doesn't correspond to a database entry but is used for uniqueness and timestamp
 
+            filename = filename.replace('\\', '/')
             event_objectid = filename.rsplit('/', 1)[-1].split('.', 1)[0]
             timestamp = get_objectid_timestamp(event_objectid)
             formatted_timestamp = strftime('%Y-%m-%d %H:%M:%S', gmtime(timestamp))
 
             if verbose:
-                log('Retrieving array event ' + str(index + 1) + ' occuring at ' + formatted_timestamp)
+                log('Retrieving array events file ' + str(index + 1) + ' submitted at ' + formatted_timestamp)
 
             with open(filename, 'rb') as fin:
                 file_content = fin.read()
             file_content = decrypt_data(file_content, enc_key)
             file_content = json_loads(zlib_decompress(file_content))
 
-            slug = file_content['slug']
-            del file_content['slug']
-            file_content['time'] = formatted_timestamp
+            if not isinstance(file_content, list):
+                file_content = [file_content]
+            for event in file_content:
+                slug = event['slug']
+                del event['slug']
+                # Some older files had no timestamp in the file data itself in which case we use the timestamp
+                # on the filename
+                if 'time' in event:
+                    event['time'] = strftime('%Y-%m-%d %H:%M:%S', gmtime(event['time']))
+                else
+                    event['time'] = formatted_timestamp
 
-            if slug not in today_log:
-                today_log[slug] = { 'playEvents': [], 'customEvents': [] }
+                if slug not in today_log:
+                    today_log[slug] = { 'playEvents': [], 'customEvents': [] }
 
-            today_log[slug]['customEvents'].append(file_content)
-            # Maintaining a list of slugs to sort the customEvents by date for so that added array events appear in
-            # order but we do not unneccesarily sort large lists if an array event wasn't added to it
-            to_sort.add(slug)
+                today_log[slug]['customEvents'].append(event)
+                # Maintaining a list of slugs to sort the customEvents by date for so that added array events appear in
+                # order but we do not unneccesarily sort large lists if an array event wasn't added to it
+                to_sort.add(slug)
 
         for slug in to_sort:
             today_log[slug]['customEvents'].sort(key=lambda k: k['time'])
