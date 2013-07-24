@@ -18,7 +18,7 @@ from os.path import exists as path_exists, join as path_join, normpath
 from getpass import getpass, GetPassWarning
 from base64 import urlsafe_b64decode
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 __dependencies__ = []
 
 
@@ -494,7 +494,7 @@ def inline_array_events_local(options, today_log, array_files_list, enc_key):
                 # on the filename
                 if 'time' in event:
                     event['time'] = strftime('%Y-%m-%d %H:%M:%S', gmtime(event['time']))
-                else
+                else:
                     event['time'] = formatted_timestamp
 
                 if slug not in today_log:
