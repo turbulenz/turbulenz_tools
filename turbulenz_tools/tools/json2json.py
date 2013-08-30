@@ -29,7 +29,10 @@ def merge(source_files, output_filename="default.json", output_metrics=True):
         try:
             with open(f, 'r') as source:
                 j = json_load(source)
-                merged = merge_dictionaries(j, merged)
+                if isinstance(j, dict):
+                    merged = merge_dictionaries(j, merged)
+                else:
+                    merged = j
         except IOError as e:
             LOG.error("Failed processing: %s" % f)
             LOG.error('  >> %s' % e)
