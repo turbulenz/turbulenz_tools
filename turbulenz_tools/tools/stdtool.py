@@ -272,13 +272,7 @@ def simple_options(parser_fn, version, dependencies, input_required=True):
     (options, args) = parser.parse_args()
 
     if options.output_version:
-        try:
-            standard_output_version(version, dependencies, options.output)
-        except AttributeError:
-            if len(args) == 1:
-                standard_output_version(version, dependencies, args[0])
-            else:
-                standard_output_version(version, dependencies)
+        standard_output_version(version, dependencies, getattr(options, 'output', None))
         exit(0)
 
     if input_required:
