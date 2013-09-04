@@ -21,7 +21,7 @@ from turbulenz_tools.utils.json_utils import merge_dictionaries
 
 #######################################################################################################################
 
-def standard_output_version(version, dependencies, output_file):
+def standard_output_version(version, dependencies, output_file=None):
     main_module_name = path_basename(sys.argv[0])
     version_string = None
     if dependencies:
@@ -272,7 +272,13 @@ def simple_options(parser_fn, version, dependencies, input_required=True):
     (options, args) = parser.parse_args()
 
     if options.output_version:
-        standard_output_version(version, dependencies, options.output)
+        try:
+            standard_output_version(version, dependencies, options.output)
+        except AttributeError:
+            if len(args) == 1:
+                standard_output_version(version, dependencies, args[0])
+            else:
+                standard_output_version(version, dependencies)
         exit(0)
 
     if input_required:
