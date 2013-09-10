@@ -50,8 +50,8 @@ def main():
 
     source_file = options.input
 
-    LOG.info('%s %s' % (__file__, source_file))
-    LOG.info('input: %s' % source_file)
+    LOG.info('%s %s', __file__, source_file)
+    LOG.info('input: %s', source_file)
 
     try:
         with open(source_file, 'r') as source:
@@ -107,7 +107,7 @@ def main():
         LOG.error(e)
         return e.errno
     except Exception as e:
-        LOG.critical('Unexpected exception: %s' % e)
+        LOG.critical('Unexpected exception: %s', e)
         return 1
     return 0
 

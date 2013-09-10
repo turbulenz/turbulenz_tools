@@ -76,7 +76,7 @@ def check_input(input_files):
         elif ext in [ '.html', '.htm' ]:
             html_files.append(f)
         else:
-            LOG.error("unrecognised file type: %s" % f)
+            LOG.error("unrecognised file type: %s", f)
             exit(1)
 
     return (js_files, html_files)
@@ -93,7 +93,7 @@ def dump_default_template(outfile_name):
 
     with open(outfile_name, "wb") as f:
         f.write(DEFAULT_HTML_TEMPLATE)
-    LOG.info("Default template written to: %s" % outfile_name)
+    LOG.info("Default template written to: %s", outfile_name)
     return 0
 
 def html_dump_dependencies(env, options, input_js, input_html):
@@ -156,7 +156,7 @@ def html_generate(env, options, input_js, input_html):
 
     template_html = load_html_template(env, input_html)
     if template_html is None:
-        LOG.error("failed to load file %s from template dirs" % input_html[0])
+        LOG.error("failed to load file %s from template dirs", input_html[0])
         exit(1)
 
     # Get context
@@ -237,10 +237,10 @@ def main():
         parser.print_help()
         exit(1)
 
-    LOG.info("options: %s" % options)
-    LOG.info("args: %s" % args)
-    LOG.info("parser: %s" % parser)
-    LOG.info("templatedirs: %s" % options.templatedirs)
+    LOG.info("options: %s", options)
+    LOG.info("args: %s", args)
+    LOG.info("parser: %s", parser)
+    LOG.info("templatedirs: %s", options.templatedirs)
 
     if options.output is None:
         LOG.error("no output file specified (required in dependency mode)")
@@ -250,7 +250,7 @@ def main():
     # Check mode
 
     if options.mode not in [ 'plugin-debug', 'plugin', 'canvas-debug', 'canvas' ]:
-        LOG.error('Unrecognised mode: %s' % options.mode)
+        LOG.error('Unrecognised mode: %s', options.mode)
         parser.print_help()
         exit(1)
 
@@ -268,8 +268,8 @@ def main():
 
     (input_js, input_html) = check_input(input_files)
 
-    LOG.info("js files: %s" % input_js)
-    LOG.info("html files: %s" % input_html)
+    LOG.info("js files: %s", input_js)
+    LOG.info("html files: %s", input_html)
 
     # In debug and canvas-debug we need a .js input file
 
@@ -279,7 +279,7 @@ def main():
             parser.print_usage()
             exit(1)
     if 1 < len(input_html):
-        LOG.error('Multiple html files specified: %s' % input_html)
+        LOG.error('Multiple html files specified: %s', input_html)
         exit(1)
 
     # Create a jinja2 env
@@ -304,7 +304,7 @@ def main():
 
     except ToolsException, e:
         #traceback.print_exc()
-        LOG.error("%s" % str(e))
+        LOG.error("%s", str(e))
 
     Profiler.stop('run')
     Profiler.stop('main')

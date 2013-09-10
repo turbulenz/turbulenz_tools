@@ -77,15 +77,14 @@ def main():
             totals = vadd(totals, stats)
             if options.verbose:
                 log(stats, g)
-    else:
-        total_string = 'cumulative total and global ratio'
-        if options.verbose:
-            print divider
+    total_string = 'cumulative total and global ratio'
+    if options.verbose:
+        print divider
 
-        log(totals, total_string)
+    log(totals, total_string)
 
-        if options.header:
-            print divider
+    if options.header:
+        print divider
 
     return 0
 

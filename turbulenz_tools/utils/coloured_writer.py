@@ -5,7 +5,7 @@ import sys
 import re
 
 # pylint: disable=R0903
-class ColouredWriterBase():
+class ColouredWriterBase(object):
     """Colour th Django server output."""
     colors = {  'endc': '\033[0m',              # black
                 'fail': '\033[91m',             # red

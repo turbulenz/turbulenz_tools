@@ -25,7 +25,7 @@ LOG = logging.getLogger('asset')
 
 #######################################################################################################################
 
-class Bmfont2json():
+class Bmfont2json(object):
     """Parse a .fnt file and generate a Turbulenz JSON geometry asset."""
 
     bold_re = re.compile(r'bold=(\d+)')

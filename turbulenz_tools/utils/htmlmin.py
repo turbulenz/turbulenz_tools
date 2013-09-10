@@ -27,7 +27,7 @@ class HTMLMinifier(HTMLParser):
         self.inside_script = False
 
     def error(self, message):
-        LOG.warning('Warning: %s' % message)
+        LOG.warning('Warning: %s', message)
 
     def handle_starttag(self, tag, attributes):
         if 'pre' == tag:

@@ -195,7 +195,7 @@ def invert_indices(indices, indices_per_vertex, vertex_per_polygon):
     elif vertex_per_polygon == 4:
         polygon_indices = zip(vertex_indices[1::4], vertex_indices[2::4], vertex_indices[3::4], vertex_indices[::4])
     else:
-        LOG.error('Vertex per polygon unsupported:%i' % vertex_per_polygon)
+        LOG.error('Vertex per polygon unsupported:%i', vertex_per_polygon)
 
     return polygon_indices
 
@@ -272,7 +272,7 @@ class UrlHandler(object):
             while u.startswith('../', u_index):
                 path_index = self.path.rfind('/', 0, path_index)
                 if path_index == -1:
-                    LOG.error('Unknown relative path:%s' % u)
+                    LOG.error('Unknown relative path:%s', u)
                     break
                 u_index += 3
             u = self.path[:(path_index + 1)] + u[u_index:]
@@ -376,8 +376,8 @@ class Dae2Geometry(object):
                     old_input = self.inputs.get(semantic, None)
                     if old_input:
                         if old_input.source != source or old_input.offset != offset:
-                            LOG.error('SEMANTIC "%s" used with different sources (%s:%d) != (%s:%d)' %
-                                      (semantic, source, offset, old_input.source, old_input.offset) )
+                            LOG.error('SEMANTIC "%s" used with different sources (%s:%d) != (%s:%d)',
+                                      semantic, source, offset, old_input.source, old_input.offset)
                     else:
                         self.inputs[semantic] = Dae2Geometry.Input(semantic, source, offset)
                     if max_offset < offset:
@@ -401,7 +401,7 @@ class Dae2Geometry(object):
         self.name = geometry_e.get('name', self.id)
         LOG.debug('GEOMETRY:%s', self.name)
         if self.name in geometry_names:
-            LOG.warning('GEOMETRY name clash:%s:replacing with:%s' % (self.name, self.id) )
+            LOG.warning('GEOMETRY name clash:%s:replacing with:%s', self.name, self.id)
             geometry_names[self.id] = self.name
             self.name = self.id
         else:
@@ -426,16 +426,16 @@ class Dae2Geometry(object):
                         break
 
                 if mesh_e is None:
-                    LOG.error('Unknown reference node:%s' % reference_name)
+                    LOG.error('Unknown reference node:%s', reference_name)
                     return
 
             if geometry_e.find(tag('spline')):
-                LOG.warning('Skipping spline based mesh:%s' % self.name)
+                LOG.warning('Skipping spline based mesh:%s', self.name)
                 self.type = 'spline'
                 return
 
             if mesh_e is None:
-                LOG.error('Unknown geometry type:%s' % self.name)
+                LOG.error('Unknown geometry type:%s', self.name)
                 return
 
 
@@ -446,7 +446,7 @@ class Dae2Geometry(object):
             source_id = s.get('id', 'unknown')
             name = s.get('name', source_id)
             if name in geometry_source_names:
-                LOG.warning('SOURCE name clash:%s:replacing with id:%s' % (name, source_id))
+                LOG.warning('SOURCE name clash:%s:replacing with id:%s', name, source_id)
                 geometry_source_names[source_id] = name
                 name = source_id
             else:
@@ -471,7 +471,7 @@ class Dae2Geometry(object):
                     values = None
                 self.sources[source_id] = Dae2Geometry.Source(values, semantic, name, stride, count)
             else:
-                LOG.warning('SOURCE (unusued):%s:semantic:%s' % (source_id, semantic))
+                LOG.warning('SOURCE (unusued):%s:semantic:%s', source_id, semantic)
 
         # Inputs...
         shared_sources = set()
@@ -499,7 +499,7 @@ class Dae2Geometry(object):
         for triangles_e in mesh_e.findall(tag('triangles')):
             max_offset, sources = self.add_input(triangles_e, shared_sources)
             if len(triangles_e) == 0:
-                LOG.warning('GEOMETRY with no faces:%s' % self.name)
+                LOG.warning('GEOMETRY with no faces:%s', self.name)
                 continue
             indices_per_vertex = max_offset + 1
             num_faces = int(triangles_e.get('count', '0'))
@@ -516,7 +516,7 @@ class Dae2Geometry(object):
         for polylist_e in mesh_e.findall(tag('polylist')):
             max_offset, sources = self.add_input(polylist_e, shared_sources)
             if len(polylist_e) == 0:
-                LOG.warning('GEOMETRY with no faces:%s' % self.name)
+                LOG.warning('GEOMETRY with no faces:%s', self.name)
                 continue
             indices_per_vertex = max_offset + 1
             num_faces = int(polylist_e.get('count', '0'))
@@ -544,7 +544,7 @@ class Dae2Geometry(object):
         for lines_e in mesh_e.findall(tag('lines')):
             max_offset, sources = self.add_input(lines_e, shared_sources)
             if len(lines_e) == 0:
-                LOG.warning('GEOMETRY with no faces:%s' % self.name)
+                LOG.warning('GEOMETRY with no faces:%s', self.name)
                 continue
             indices_per_vertex = max_offset + 1
             num_faces = int(lines_e.get('count', '0'))
@@ -559,7 +559,7 @@ class Dae2Geometry(object):
         for polygons_e in mesh_e.findall(tag('polygons')):
             max_offset, sources = self.add_input(polygons_e, shared_sources)
             if len(polygons_e) == 0:
-                LOG.warning('GEOMETRY with no faces:%s' % self.name)
+                LOG.warning('GEOMETRY with no faces:%s', self.name)
                 continue
             indices_per_vertex = max_offset + 1
             num_faces = int(polygons_e.get('count', '0'))
@@ -573,12 +573,12 @@ class Dae2Geometry(object):
                     indices.append( (face_indices[0], face_indices[t-1], face_indices[t]) )
 
             if polygons_e.find(tag('ph')):
-                LOG.warning('GEOMETRY using polygons with holes, please triangulate when exporting:%s.' % self.name)
+                LOG.warning('GEOMETRY using polygons with holes, please triangulate when exporting:%s.', self.name)
 
             if 0 < len(indices):
                 self.surfaces[material] = Dae2Geometry.Surface(sources, indices, JsonAsset.SurfaceTriangles)
             else:
-                LOG.warning('GEOMETRY without valid primitives:%s.' % self.name)
+                LOG.warning('GEOMETRY without valid primitives:%s.', self.name)
     # pylint: enable=R0914
 
     # pylint: disable=R0914
@@ -685,7 +685,7 @@ class Dae2Geometry(object):
 
         if generate_tangents:
             if has_uvs is False:
-                LOG.warning('Material "%s" requires tangents but geometry "%s" has no UVs' % (mat_name, self.name))
+                LOG.warning('Material "%s" requires tangents but geometry "%s" has no UVs', mat_name, self.name)
                 return
 
         for mat_name, surface in self.surfaces.iteritems():
@@ -842,8 +842,8 @@ class Dae2Geometry(object):
                             group_type = int(stdout_readline())
                             num_indexes = int(stdout_readline())
                             if num_groups != 1 or group_type != 0 or num_indexes != (end_index - start_index) * 3:
-                                LOG.warning("NvTriStripper failed: %d groups, type %d, %d indexes." %
-                                            (num_groups, group_type, num_indexes))
+                                LOG.warning("NvTriStripper failed: %d groups, type %d, %d indexes.",
+                                            num_groups, group_type, num_indexes)
                             else:
                                 n = start_index * 3
                                 for value in stdout_readline().split():
@@ -856,7 +856,7 @@ class Dae2Geometry(object):
                                 error_string = error_string[1]
                             else:
                                 error_string = str(e)
-                            LOG.warning("NvTriStripper failed: %s" % error_string)
+                            LOG.warning("NvTriStripper failed: %s", error_string)
                         stdout_readline = None
                         nvtristrip_proc = None
                         #LOG.info(indexes)
@@ -864,7 +864,7 @@ class Dae2Geometry(object):
                     except OSError as e:
                         LOG.warning("NvTriStripper failed: " + str(e))
                 else:
-                    LOG.warning("Too many vertices to use NvTriStrip: %d" % num_vertices)
+                    LOG.warning("Too many vertices to use NvTriStrip: %d", num_vertices)
                 indexes_map = None
                 reverse_map = None
 
@@ -930,7 +930,7 @@ class Dae2Effect(object):
         self.id = effect_e.get('id', 'unknown')
         self.name = effect_e.get('name', self.id)
         if self.name in effect_names:
-            LOG.warning('EFFECT name clash:%s:replacing with:%s' % (self.name, self.id) )
+            LOG.warning('EFFECT name clash:%s:replacing with:%s', self.name, self.id)
             effect_names[self.id] = self.name
             self.name = self.id
         else:
@@ -1274,7 +1274,7 @@ class Dae2Light(object):
         self.id = light_e.get('id', 'unknown')
         self.name = light_e.get('name', self.id)
         if self.name in light_names:
-            LOG.warning('LIGHT name clash:%s:replacing with:%s' % (self.name, self.id) )
+            LOG.warning('LIGHT name clash:%s:replacing with:%s', self.name, self.id)
             light_names[self.id] = self.name
             self.name = self.id
         else:
@@ -1358,7 +1358,7 @@ class Dae2Node(object):
                         self.materials[material_e.get('symbol')] = tidy_name(material_e.get('target'))
                         found_material = True
             if not found_material:
-                LOG.warning('INSTANCE_GEOMETRY with no material:url:%s:using:default' % self.geometry)
+                LOG.warning('INSTANCE_GEOMETRY with no material:url:%s:using:default', self.geometry)
                 self.materials['default'] = 'default'
 
         def attach(self, json_asset, name_map, node_name=None):
@@ -1433,7 +1433,7 @@ class Dae2Node(object):
                                 values.append(vmath.m43from_m44(matrix))
                             self.sources[s.get('id')] = { 'name': param_name, 'values': values }
                     else:
-                        LOG.warning('SKIN with unknown param type:%s:ignoring' % param_type)
+                        LOG.warning('SKIN with unknown param type:%s:ignoring', param_type)
                 joints_e = skin_e.find(tag('joints'))
                 inputs = joints_e.findall(tag('input'))
                 for i in inputs:
@@ -1572,7 +1572,7 @@ class Dae2Node(object):
                         self.materials[material_e.get('symbol')] = tidy_name(material_e.get('target'))
                         found_material = True
             if not found_material:
-                LOG.warning('INSTANCE_GEOMETRY with no material:url:%s:using:default' % self.geometry)
+                LOG.warning('INSTANCE_GEOMETRY with no material:url:%s:using:default', self.geometry)
                 self.materials['default'] = 'default'
 
             self.child_name = child_name
@@ -1601,7 +1601,7 @@ class Dae2Node(object):
 
         def attach(self, json_asset, name_map, parent_node_name=None):
             if self.geometry is None:
-                LOG.warning('Skipping INSTANCE_CONTROLLER with no geometry attached to %s' % parent_node_name)
+                LOG.warning('Skipping INSTANCE_CONTROLLER with no geometry attached to %s', parent_node_name)
                 return
             if self.child_name is None:
                 node_name = parent_node_name
@@ -1676,7 +1676,7 @@ class Dae2Node(object):
         if path_str in node_names:
             self.name += self.id
             path.name = self.name
-            LOG.warning('NODE name clash:%s:replacing with:%s' % (path_str, str(path)) )
+            LOG.warning('NODE name clash:%s:replacing with:%s', path_str, str(path))
             path_str = str(path)
         self.path = path
 
@@ -1766,12 +1766,12 @@ class Dae2Node(object):
                 if material == 'default':
                     if len(geometry.surfaces) != 1:
                         surfaces_to_remove.append(material)
-                        LOG.warning('INSTANCE_GEOMETRY referencing default surface but geometry has surfaces:url:%s' %
+                        LOG.warning('INSTANCE_GEOMETRY referencing default surface but geometry has surfaces:url:%s',
                                     instance_geometry.geometry)
                 elif material not in geometry.surfaces:
                     surfaces_to_remove.append(material)
-                    LOG.warning('INSTANCE_GEOMETRY referencing surface not present in geometry:surface:%s:url:%s' %
-                                (material, instance_geometry.geometry))
+                    LOG.warning('INSTANCE_GEOMETRY referencing surface not present in geometry:surface:%s:url:%s',
+                                material, instance_geometry.geometry)
             for surface in surfaces_to_remove:
                 del instance_geometry.materials[surface]
 
@@ -1969,8 +1969,8 @@ class Dae2InstancePhysicsModel(object):
             body_name = find_scoped_name(self.body_name, self.parent_url, name_map)
             body = find_scoped_node(self.body_name, self.parent_url, rigid_body_map)
             if not body:
-                LOG.warning('Rigid body instance references an unknown physics model: %s -> %s' %
-                            (self.name, self.body_name))
+                LOG.warning('Rigid body instance references an unknown physics model: %s -> %s',
+                            self.name, self.body_name)
             target = node_map.get(self.target, None)
             if target:
                 target_name = target.path
@@ -1978,8 +1978,8 @@ class Dae2InstancePhysicsModel(object):
                 target_path = str(target_name)
                 if '/' in target_path:
                     if body and body.get('dynamic', False):
-                        LOG.error('Dynamic rigid body targets non-root graphics node: %s -> %s' %
-                                  (body_name, target_path))
+                        LOG.error('Dynamic rigid body targets non-root graphics node: %s -> %s',
+                                  body_name, target_path)
             else:
                 target_name = NodeName(find_name(name_map, self.target))
 
@@ -2135,9 +2135,9 @@ class Dae2Animation(object):
         interpolation = self.sources[sampler['inputs']['INTERPOLATION']]['values']
 
         if len(times) == 0 or len(values) == 0:
-            LOG.error('Animation evaluation failed due to missing times or values in:%s' % (self.name))
+            LOG.error('Animation evaluation failed due to missing times or values in:%s', self.name)
         if len(times) != len(values):
-            LOG.error('Animation evaluation failed due to mismatch in count of times and values in:%s' % (self.name))
+            LOG.error('Animation evaluation failed due to mismatch in count of times and values in:%s', self.name)
 
         if time < times[0]:
             return values[0]
@@ -2150,8 +2150,8 @@ class Dae2Animation(object):
                 start_key = i - 1
                 end_key = i
                 if interpolation[start_key] != 'LINEAR':
-                    LOG.warning('Animation evaluation linear sampling non linear keys of type:%s:in animation:%s' %
-                                (interpolation[start_key], self.name))
+                    LOG.warning('Animation evaluation linear sampling non linear keys of type:%s:in animation:%s',
+                                interpolation[start_key], self.name)
                 start_time = times[start_key]
                 end_time = t
                 delta = (time - start_time) / (end_time - start_time)
@@ -2161,8 +2161,8 @@ class Dae2Animation(object):
                     return (start_val + delta * (end_val - start_val))
                 else:
                     if len(start_val) != len(end_val):
-                        LOG.error('Animation evaluation failed in animation:%s:due to mismatched keyframe sizes' %
-                                  (self.name))
+                        LOG.error('Animation evaluation failed in animation:%s:due to mismatched keyframe sizes',
+                                  self.name)
                     result = []
                     for v in xrange(0, len(start_val)):
                         val1 = start_val[v]
@@ -2170,7 +2170,7 @@ class Dae2Animation(object):
                         result.append(val1 + delta * (val2 - val1))
                     return result
 
-        LOG.warning('Animation evaluation failed in animation:%s' % (self.name))
+        LOG.warning('Animation evaluation failed in animation:%s', self.name)
         return values[0]
 
 
@@ -2184,7 +2184,7 @@ def _decompose_matrix(matrix, node):
     det = vmath.m43determinant(matrix)
     if not vmath.v3equal(vmath.v3create(sx, sy, sz), vmath.v3create(1, 1, 1)) or det < 0:
         if det < 0:
-            LOG.warning('Detected negative scale in node "%s", not currently supported' % node.name)
+            LOG.warning('Detected negative scale in node "%s", not currently supported', node.name)
             sx *= -1
         if sx != 0:
             matrix = vmath.m43setright(matrix, vmath.v3muls(vmath.m43right(matrix), 1 / sx))
@@ -2619,12 +2619,12 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
     try:
         collada_e = ElementTree.parse(input_filename).getroot()
     except IOError as e:
-        LOG.error('Failed loading: %s' % input_filename)
-        LOG.error('  >> %s' % e)
+        LOG.error('Failed loading: %s', input_filename)
+        LOG.error('  >> %s', e)
         exit(1)
     except ExpatError as e:
-        LOG.error('Failed processing: %s' % input_filename)
-        LOG.error('  >> %s' % e)
+        LOG.error('Failed processing: %s', input_filename)
+        LOG.error('  >> %s', e)
         exit(2)
     else:
         if collada_e is not None:
@@ -2682,7 +2682,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                     if g.type == 'mesh' or g.type == 'convex_mesh':
                         geometries[g.id] = g
             else:
-                LOG.warning('Collada file without:library_geometries:%s' % input_filename)
+                LOG.warning('Collada file without:library_geometries:%s', input_filename)
 
             lights_e = collada_e.find(tag('library_lights'))
             if lights_e is not None:
@@ -2696,18 +2696,18 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                 visual_scene_e = visual_scenes_e.findall(tag('visual_scene'))
                 if visual_scene_e is not None:
                     if len(visual_scene_e) > 1:
-                        LOG.warning('Collada file with more than 1:visual_scene:%s' % input_filename)
+                        LOG.warning('Collada file with more than 1:visual_scene:%s', input_filename)
                     node_e = visual_scene_e[0].findall(tag('node'))
                     for n in node_e:
                         n = Dae2Node(n, scale, None, upaxis_rotate, None, controllers_e, collada_e,
                                      name_map, node_names, node_map, geometries)
                         nodes[n.id] = n
                     if len(node_e) == 0:
-                        LOG.warning('Collada file without:node:%s' % input_filename)
+                        LOG.warning('Collada file without:node:%s', input_filename)
                 else:
-                    LOG.warning('Collada file without:visual_scene:%s' % input_filename)
+                    LOG.warning('Collada file without:visual_scene:%s', input_filename)
             else:
-                LOG.warning('Collada file without:library_visual_scenes:%s' % input_filename)
+                LOG.warning('Collada file without:library_visual_scenes:%s', input_filename)
 
             animations_e = collada_e.find(tag('library_animations'))
             if animations_e is not None:
@@ -2755,7 +2755,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                     e = Dae2Effect(x, url_handler, name_map, effect_names)
                     effects[e.id] = e
             else:
-                LOG.warning('Collada file without:library_effects:%s' % input_filename)
+                LOG.warning('Collada file without:library_effects:%s', input_filename)
                 # json.AddObject("default")
                 # json.AddString("type", "lambert")
 
@@ -2765,7 +2765,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                     m = Dae2Material(x, name_map)
                     materials[m.id] = m
             else:
-                LOG.warning('Collada file without:library_materials:%s' % input_filename)
+                LOG.warning('Collada file without:library_materials:%s', input_filename)
                 # json.AddObject("default")
                 # json.AddString("effect", "default")
 
@@ -2799,7 +2799,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                 physics_scene_e = physics_scenes_e.findall(tag('physics_scene'))
                 if physics_scene_e is not None:
                     if len(physics_scene_e) > 1:
-                        LOG.warning('Collada file with more than 1:physics_scene:%s' % input_filename)
+                        LOG.warning('Collada file with more than 1:physics_scene:%s', input_filename)
                     for x in physics_scene_e[0].findall(tag('instance_physics_model')):
                         i = Dae2InstancePhysicsModel(x)
                         physics_nodes[i.name] = i
@@ -2872,8 +2872,8 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
     try:
         standard_json_out(json_asset, output_filename, options)
     except IOError as e:
-        LOG.error('Failed processing: %s' % output_filename)
-        LOG.error('  >> %s' % e)
+        LOG.error('Failed processing: %s', output_filename)
+        LOG.error('  >> %s', e)
         exit(3)
 
     return json_asset

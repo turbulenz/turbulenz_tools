@@ -69,7 +69,7 @@ def main():
         LOG.error(e)
         return e.errno
     except Exception as e:
-        LOG.critical('Unexpected exception: %s' % e)
+        LOG.critical('Unexpected exception: %s', e)
         return 1
 
 if __name__ == "__main__":

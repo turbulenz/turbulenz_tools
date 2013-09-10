@@ -121,7 +121,7 @@ class Json2htmlRenderer(Json2txtRenderer):
 
 #######################################################################################################################
 
-class Disassembler:
+class Disassembler(object):
     """Convert JSON to HTML."""
 
     def __init__(self, renderer, list_cull=3, dict_cull=3, depth=2, link_prefix='',

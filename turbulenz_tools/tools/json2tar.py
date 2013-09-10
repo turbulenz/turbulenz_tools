@@ -45,7 +45,7 @@ def images_in_asset(json_asset):
                     if isinstance(texture_map, (str, unicode)):
                         texture_maps[texture_stage] = True
                         yield texture_map, texture_stage
-        LOG.info('contains: %s' % ', '.join(texture_maps.keys()))
+        LOG.info('contains: %s', ', '.join(texture_maps.keys()))
 
 def _parser():
     parser = OptionParser(description='Generate a TAR file for binary assets referenced from a JSON asset.',
@@ -80,8 +80,8 @@ def main():
 
     tar_file = DependencyTar()
 
-    LOG.info('%s %s' % (__file__, options.input))
-    LOG.info('input: %s' % options.input)
+    LOG.info('%s %s', __file__, options.input)
+    LOG.info('input: %s', options.input)
 
     try:
         with open(options.input, 'r') as source:
@@ -101,35 +101,35 @@ def main():
                         if os.path.exists(image_path):
                             # Actually do the tar add
                             tar_file.add(image_path, image_name)
-                            LOG.info('adding: %s' % image_name)
+                            LOG.info('adding: %s', image_name)
                             image_path = image_path.replace("\\", "/")
                             added += 1
                         else:
                             # We don't mind if files are missing
-                            LOG.warning('missing: %s' % image_name)
+                            LOG.warning('missing: %s', image_name)
                             missed += 1
                     except OSError:
                         # We don't mind if files are missing
-                        LOG.warning('missing: %s' % image_name)
+                        LOG.warning('missing: %s', image_name)
                         missed += 1
                     image_map[image_name] = 0
                 else:
-                    LOG.info('skipping: %s' % image_name)
+                    LOG.info('skipping: %s', image_name)
                     skipped += 1
                 image_map[image_name] += 1
             tar_file.close()
-            LOG.info('output: %s' % options.output)
-            LOG.info('report: added %i, missing %i, skipped %i' % (added, missed, skipped))
+            LOG.info('output: %s', options.output)
+            LOG.info('report: added %i, missing %i, skipped %i', added, missed, skipped)
     except IOError as e:
         LOG.error(e)
         return e.errno
     except Exception as e:
-        LOG.critical('Unexpected exception: %s' % e)
+        LOG.critical('Unexpected exception: %s', e)
         return 1
 
     if options.dependency:
         if options.dependency_file:
-            LOG.info('writing dependencies: %s' % options.dependency_file)
+            LOG.info('writing dependencies: %s', options.dependency_file)
             dep_file = open(options.dependency_file, 'w')
 
             for dep in tar_file.items():

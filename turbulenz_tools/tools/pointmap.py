@@ -13,7 +13,7 @@ __dependencies__ = ['vmath']
 
 #######################################################################################################################
 
-class Node:
+class Node(object):
     """kd-tree node."""
 
     def __init__(self, vertex_index, split_axis):

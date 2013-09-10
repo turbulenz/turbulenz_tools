@@ -26,8 +26,7 @@ class DefaultTemplateLoader(BaseLoader):
 
     def get_source(self, env, template):
         if template == self.name:
-            LOG.info("Request for template '%s'.  Using default registered" \
-                         % template)
+            LOG.info("Request for template '%s'.  Using default registered", template)
             return self.template, None, lambda: True
         raise TemplateNotFound(template)
 
@@ -83,7 +82,7 @@ def env_create(options, default_template=None):
 
     LOG.info("Template dirs:")
     for t in options.templatedirs:
-        LOG.info(" - '%s'" % t)
+        LOG.info(" - '%s'", t)
 
     loaders = [ UTF8FileSystemLoader(t) for t in options.templatedirs ]
     if default_template is not None:

@@ -69,7 +69,7 @@ def purge_empty(dictionary, recurseOnce = False):
 
 #######################################################################################################################
 
-class Surface:
+class Surface(object):
     """Represents a surface (a.k.a. group) as parsed from the .obj file into .json format
 
         Contains a material, and indices into the Obj2json.primitives list
@@ -83,7 +83,7 @@ class Surface:
     def is_empty(self):
         return self.count == 0
 
-class Shape:
+class Shape(object):
     """Represents a shape (a.k.a. object) as parsed from the .obj file into .json format
 
         Contains a dictionary of names -> surfaces."""
@@ -131,7 +131,7 @@ class Obj2json(Mesh):
 
     def __read_object_name(self, data):
         """Parse the 'o' line. This line contains the mesh name."""
-        LOG.debug("object name:%s" % data)
+        LOG.debug("object name:%s", data)
         # Remove any shapes with no surfaces (e.g. the default shape if a named one is given)
         purge_empty(self.shapes)
         # If a shape with this name has already been declared, do not change it,
@@ -145,7 +145,7 @@ class Obj2json(Mesh):
         """Parse the 'g' line. This indicates the start of a group (surface)."""
         # Remove leading/trailing whitespace
         data = data.strip()
-        LOG.debug("group name:%s" % data)
+        LOG.debug("group name:%s", data)
         # Note: Don't purge empty shapes/surfaces here, you might remove a new surface
         #       created by a preceding 'usemtl' line. Purging happens after parsing.
         self.curr_surf_name = data
@@ -156,7 +156,7 @@ class Obj2json(Mesh):
     def __read_material(self, data):
         """Parse the 'usemtl' line. This references a material."""
         data = data.strip()
-        LOG.debug("material name:%s" % data)
+        LOG.debug("material name:%s", data)
         self.curr_mtl_name = data
         if self.curr_surf.is_empty():
             # No polygons (yet) in the current surface, so just set its material
@@ -366,7 +366,7 @@ class Obj2json(Mesh):
                     # Same reasoning as with generating tangents
                     generate_normals = generate_normals or not len(self.normals)
         if generate_tangents and 0 == len(self.uvs[0]):
-            LOG.debug("Can't generate nbts without uvs:%i"% (len(self.uvs[0])))
+            LOG.debug("Can't generate nbts without uvs:%i", len(self.uvs[0]))
             generate_tangents = False
             need_tangents     = set()
         return (need_normals, generate_normals, need_tangents, generate_tangents)
@@ -378,7 +378,7 @@ def parse(input_filename="default.obj", output_filename="default.json", asset_ur
           infiles=None, options=None):
     """Utility function to convert an OBJ file into a JSON file."""
     definitions_asset = standard_include(infiles)
-    with open(input_filename, 'rt') as source:
+    with open(input_filename, 'r') as source:
         asset = Obj2json(basename(input_filename))
         asset.parse(source)
         # Remove any and all unused (e.g. default) shapes and surfaces
@@ -423,7 +423,7 @@ def parse(input_filename="default.obj", output_filename="default.json", asset_ur
                     # Needing tangents implies needing normals and binormals
                     json_asset.attach_nbts(asset.normals, asset.tangents, asset.binormals, shape_name)
                 else:
-                    LOG.error('tangents requested for shape %s, but no tangents or uvs available!' % shape_name)
+                    LOG.error('tangents requested for shape %s, but no tangents or uvs available!', shape_name)
             elif shape_name in need_normals:
                 json_asset.attach_normals(asset.normals, shape_name)
             for surface_name, surface in asset.shapes[shape_name].surfaces.iteritems():

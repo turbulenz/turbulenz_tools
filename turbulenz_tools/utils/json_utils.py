@@ -12,10 +12,10 @@ def merge_dictionaries(outof, into, prefix='\t'):
     for k in outof.keys():
         if k in into:
             if isinstance(outof[k], dict):
-                LOG.debug("%sMerging:%s" % (prefix, k))
+                LOG.debug("%sMerging:%s", prefix, k)
                 into[k] = merge_dictionaries(outof[k], into[k], prefix + '\t')
             else:
-                LOG.debug("%sSkipping:%s" % (prefix, k))
+                LOG.debug("%sSkipping:%s", prefix, k)
         else:
             into[k] = outof[k]
     return into
@@ -86,4 +86,4 @@ def log_metrics(asset):
     keys = m.keys()
     keys.sort()
     for k in keys:
-        LOG.info('%s:%s' % (k, m[k]))
+        LOG.info('%s:%s', k, m[k])

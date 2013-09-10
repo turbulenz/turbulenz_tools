@@ -106,7 +106,7 @@ def tzjs_dump_dependencies(env, options, input_js):
     injects = inject_js_from_options(options)
 
     LOG.info("files to inject:")
-    _ = [ LOG.info(" - %s" % i) for i in injects ]
+    _ = [ LOG.info(" - %s", i) for i in injects ]
 
     # Do a full parse with a correct context, and extract the
     # javascript includes
@@ -153,7 +153,7 @@ def tzjs_compact(options, infile, outfile):
         uglify_rel_path = relpath(options.uglifyjs).replace('\\', '/')
         command = ['node', uglify_rel_path, '-o', outfile, infile]
 
-    LOG.info("  CMD: %s" % command)
+    LOG.info("  CMD: %s", command)
     subproc = SubProc(command)
     error_code = subproc.time_popen()
 
@@ -174,7 +174,7 @@ def tzjs_generate(env, options, input_js):
     if 0 < len(inject_js):
         LOG.info("Files to inject:")
         for i in inject_js:
-            LOG.info(" - '%s'" % i)
+            LOG.info(" - '%s'", i)
 
     # Create a context and render the template
 
@@ -233,7 +233,7 @@ def tzjs_generate(env, options, input_js):
         # streams.
 
         strip_cmd = "%s %s" % (strip_path, strip_debug_flags)
-        LOG.info("Strip cmd: %s" % strip_cmd)
+        LOG.info("Strip cmd: %s", strip_cmd)
         p = subprocess.Popen(strip_cmd, shell=True,
                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
@@ -267,17 +267,17 @@ def tzjs_generate(env, options, input_js):
         Profiler.start('compact')
 
         with NamedTemporaryFile(delete = False) as t:
-            LOG.info("Writing temp JS to '%s'" % t.name)
+            LOG.info("Writing temp JS to '%s'", t.name)
             t.write(rendered_js)
 
-        LOG.info("Compacting temp JS to '%s'" % options.output)
+        LOG.info("Compacting temp JS to '%s'", options.output)
         tzjs_compact(options, t.name, options.output)
         remove(t.name)
         Profiler.stop('compact')
 
     else:
 
-        LOG.info("Writing JS to '%s'" % options.output)
+        LOG.info("Writing JS to '%s'", options.output)
         Profiler.start('write_out')
         try:
             with open(options.output, 'wb') as f:
@@ -306,7 +306,7 @@ def main():
         exit(1)
 
     if options.mode not in [ 'plugin', 'canvas' ]:
-        LOG.error("invalid mode %s" % options.mode)
+        LOG.error("invalid mode %s", options.mode)
         parser.print_help()
         exit(1)
 
@@ -320,7 +320,7 @@ def main():
     env = env_create(options)
     input_js = args
 
-    LOG.info("input files: %s" % input_js)
+    LOG.info("input files: %s", input_js)
 
     Profiler.stop('startup')
     Profiler.start('run')

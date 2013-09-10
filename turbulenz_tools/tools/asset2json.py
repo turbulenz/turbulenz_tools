@@ -92,7 +92,7 @@ DEFAULT_PROCEDURALEFFECT_NAME = 'effect-0'
 DEFAULT_APPLICATION_NAME = 'player'
 
 # pylint: disable=R0904
-class JsonAsset():
+class JsonAsset(object):
     """Contains a JSON asset."""
     SurfaceLines = 0
     SurfaceTriangles = 1
@@ -162,7 +162,7 @@ class JsonAsset():
         keys = m.keys()
         keys.sort()
         for k in keys:
-            LOG.info('json_asset:%s:%s' % (k, m[k]))
+            LOG.info('json_asset:%s:%s', k, m[k])
 
 #######################################################################################################################
 
@@ -175,20 +175,20 @@ class JsonAsset():
             source['min'] = min_element
         if max_element is not None:
             source['max'] = max_element
-        LOG.debug("geometries:%s:sources:%s[%i]" % (shape, name, len(data) / stride))
+        LOG.debug("geometries:%s:sources:%s[%i]", shape, name, len(data) / stride)
         self.asset['geometries'][shape]['sources'][name] = source
 
     def __set_input(self, shape, element, data):
         """Add a vertex stream input for the specified geometry shape."""
-        LOG.debug("geometries:%s:inputs:%s:%s offset %i" % (shape, element, data['source'], data['offset']))
+        LOG.debug("geometries:%s:inputs:%s:%s offset %i", shape, element, data['source'], data['offset'])
         self.asset['geometries'][shape]['inputs'][element] = data
 
     def __set_shape(self, shape, key, data, name=None):
         """Add a key and data to the specified geometry shape."""
         if isinstance(data, list):
-            LOG.debug("geometries:%s:%s[%i]" % (shape, key, len(data)))
+            LOG.debug("geometries:%s:%s[%i]", shape, key, len(data))
         else:
-            LOG.debug("geometries:%s:%s:%i" % (shape, key, data))
+            LOG.debug("geometries:%s:%s:%i", shape, key, data)
         if name is None:
             self.asset['geometries'][shape][key] = data
         else:
@@ -207,12 +207,12 @@ class JsonAsset():
 
     def __set_geometry(self, key, data):
         """Add a key and data to single geometry."""
-        LOG.debug("geometries:%s:%s" % (key, data))
+        LOG.debug("geometries:%s:%s", key, data)
         self.asset['geometries'][key] = data
 
     def __set_asset(self, key, data):
         """Add a key and data to the asset."""
-        LOG.debug("%s:%s" % (key, data))
+        LOG.debug("%s:%s", key, data)
         self.asset[key] = data
 
     def __attach_v1(self, shape, source, name, attribute, offset=0):
@@ -417,16 +417,16 @@ class JsonAsset():
         elif primitive_type == JsonAsset.SurfaceQuads:
             self.__set_shape(shape, 'quads', indices, name)
         else:
-            LOG.error('Unsupported primitive type:%i' % primitive_type)
+            LOG.error('Unsupported primitive type:%i', primitive_type)
 
     def attach_geometry_skeleton(self, shape=DEFAULT_SHAPE_NAME, skeleton=DEFAULT_SKELETON_NAME):
         """Add a skeleton for the specified geometry shape."""
-        LOG.debug("geometries:%s:skeleton added:%s" % (shape, skeleton))
+        LOG.debug("geometries:%s:skeleton added:%s", shape, skeleton)
         self.asset['geometries'][shape]['skeleton'] = skeleton
 
     def attach_skeleton(self, skeleton, name=DEFAULT_SKELETON_NAME):
         """Add a skeleton object."""
-        LOG.debug("%s:skeleton added" % (name))
+        LOG.debug("%s:skeleton added", name)
         self.asset['skeletons'][name] = skeleton
 
     def attach_bbox(self, bbox):
@@ -449,13 +449,13 @@ class JsonAsset():
                       parameters=None, shader=None, meta=None, raw=None):
         """Attach a new effect to the JSON representation."""
         if raw:
-            LOG.debug("effects:%s:elements:%i" % (name, len(raw.keys())))
+            LOG.debug("effects:%s:elements:%i", name, len(raw.keys()))
             self.asset['effects'][name] = raw
         else:
             if parameters is None:
                 parameters = { }
             if name not in self.asset['effects']:
-                LOG.debug("effects:%s:type:%s" % (name, effect_type))
+                LOG.debug("effects:%s:type:%s", name, effect_type)
                 effect = { 'type': effect_type, 'parameters': parameters }
                 if shader is not None:
                     effect['shader'] = shader
@@ -471,10 +471,10 @@ class JsonAsset():
                 num_stages = len(raw['stages'])
             else:
                 num_stages = 0
-            LOG.debug("materials:%s:elements:%i:stages:%i" % (name, len(raw.keys()), num_stages))
+            LOG.debug("materials:%s:elements:%i:stages:%i", name, len(raw.keys()), num_stages)
             self.asset['materials'][name] = raw
         else:
-            LOG.debug("materials:%s:effect:%s" % (name, effect))
+            LOG.debug("materials:%s:effect:%s", name, effect)
             material = { }
             if effect is not None:
                 material['effect'] = effect
@@ -510,7 +510,7 @@ class JsonAsset():
         """Attach an image and linked parameter to the effect of the JSON representation."""
         assert( material in self.asset['materials'] )
         file_link = self.attach_image(filename)
-        LOG.debug("material:%s:parameters:%s:%s" % (material, stage, filename))
+        LOG.debug("material:%s:parameters:%s:%s", material, stage, filename)
         # Override the texture definition to redirect to this new shortcut to the image
         self.asset['materials'][material]['parameters'][stage] = file_link
 
@@ -520,7 +520,7 @@ class JsonAsset():
         if not transform:
             transform = self.default_transform
         node = self.__retrieve_node(name)
-        LOG.debug("nodes:%s:matrix:%s" % (name, transform))
+        LOG.debug("nodes:%s:matrix:%s", name, transform)
         if len(transform) == 16:
             transform = vmath.m43from_m44(transform)
         if not vmath.m43is_identity(transform):
@@ -535,12 +535,12 @@ class JsonAsset():
         """Attach a node connecting a shape, material and transform to the JSON representation."""
         assert(isinstance(name, NodeName))
         assert(shape in self.asset['geometries'])
-        LOG.debug("nodes:%s:geometry:%s" % (name, shape))
+        LOG.debug("nodes:%s:geometry:%s", name, shape)
         if not material in self.asset['materials']:
-            LOG.info("nodes:%s:referencing missing material:%s" % (name, material))
+            LOG.info("nodes:%s:referencing missing material:%s", name, material)
         else:
-            LOG.debug("nodes:%s:material:%s" % (name, material))
-        LOG.debug("nodes:%s:disabled:%s" % (name, disabled))
+            LOG.debug("nodes:%s:material:%s", name, material)
+        LOG.debug("nodes:%s:disabled:%s", name, disabled)
         instance = self.__retrieve_shape_instance(name, shape_instance)
         instance['geometry'] = shape
         instance['material'] = material
@@ -568,9 +568,9 @@ class JsonAsset():
         """Attach a node connecting a material to the JSON representation."""
         assert(isinstance(name, NodeName))
         if not material in self.asset['materials']:
-            LOG.info("nodes:%s:referencing missing material:%s" % (name, material))
+            LOG.info("nodes:%s:referencing missing material:%s", name, material)
         else:
-            LOG.debug("nodes:%s:material:%s" % (name, material))
+            LOG.debug("nodes:%s:material:%s", name, material)
         instance = self.__retrieve_shape_instance(name, shape_instance)
         instance['material'] = material
 
@@ -581,7 +581,7 @@ class JsonAsset():
         """Attach a node connecting a light and transform to the JSON representation."""
         assert(isinstance(name, NodeName))
         assert(light in self.asset['lights'])
-        LOG.debug("nodes:%s:light:%s" % (name, light))
+        LOG.debug("nodes:%s:light:%s", name, light)
         instance = self.__retrieve_light_instance(name, light_instance)
         instance['light'] = light
         if disabled:

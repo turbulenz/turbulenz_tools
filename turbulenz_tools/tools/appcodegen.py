@@ -186,13 +186,13 @@ def render_js(context, options, templates_js, inject_js):
             raise ToolsException(str(ex))
         if f is None:
             raise ToolsException("No file '%s' in any template dir" % name)
-        LOG.info(" resolved '%s' to path '%s'" % (name, f))
+        LOG.info(" resolved '%s' to path '%s'", name, f)
         return f
 
     def handle_javascript_dev(name):
         file_path = _find_include_or_error(name)
         if file_path in includes_seen:
-            LOG.info(" include '%s' (%s) already listed" % (name, file_path))
+            LOG.info(" include '%s' (%s) already listed", name, file_path)
             return ""
         includes_seen.append(file_path)
 
@@ -215,7 +215,7 @@ def render_js(context, options, templates_js, inject_js):
             return ""
         file_path = _find_include_or_error(name)
         if file_path in includes_seen:
-            LOG.info(" include '%s' (%s) already listed" % (name, file_path))
+            LOG.info(" include '%s' (%s) already listed", name, file_path)
             return ""
         includes_seen.append(file_path)
 
@@ -281,9 +281,9 @@ def render_js_extract_includes(context, options, templates_js, injects):
         if file_path is None:
             raise ToolsException("No file '%s' in any template dir" % name)
         if file_path in includes:
-            LOG.info(" include '%s' (%s) already listed" % (name, file_path))
+            LOG.info(" include '%s' (%s) already listed", name, file_path)
             return
-        LOG.info(" resolved '%s' to path '%s'" % (name, file_path))
+        LOG.info(" resolved '%s' to path '%s'", name, file_path)
         includes.append(file_path)
 
     # In release mode, filter out debug.js
@@ -407,7 +407,7 @@ def inject_js_from_options(options):
             p = os.path.join(t, webgl_engine_file)
             if os.path.exists(p):
                 webgl_abs_path = os.path.dirname(p)
-                LOG.info("Found at: %s" % webgl_abs_path)
+                LOG.info("Found at: %s", webgl_abs_path)
                 break
 
         if webgl_abs_path is None:

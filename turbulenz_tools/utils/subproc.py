@@ -9,7 +9,7 @@ import subprocess
 
 __version__ = '1.0.0'
 
-class SubProc:
+class SubProc(object):
     """Encapsulation for running subprocesses, capturing the output and processing to return in a response."""
     def __init__(self, command, cwd=None):
         self.command = command

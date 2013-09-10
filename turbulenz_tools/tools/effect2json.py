@@ -32,8 +32,8 @@ def parse(input_filename="default.effect", output_filename="default.json", asset
             # pylint: disable=E1101
             except yaml.scanner.ScannerError as e:
             # pylint: enable=E1101
-                LOG.error('Failed processing: %s' % input_filename)
-                LOG.error('  >> %s' % e)
+                LOG.error('Failed processing: %s', input_filename)
+                LOG.error('  >> %s', e)
             else:
                 json_asset = JsonAsset()
                 for effect_name, effect_parameters in effects.iteritems():
@@ -45,8 +45,8 @@ def parse(input_filename="default.effect", output_filename="default.json", asset
                 standard_json_out(json_asset, output_filename, options)
                 return json_asset
     except IOError as e:
-        LOG.error('Failed processing: %s' % output_filename)
-        LOG.error('  >> %s' % e)
+        LOG.error('Failed processing: %s', output_filename)
+        LOG.error('  >> %s', e)
         return None
 
 if __name__ == "__main__":
@@ -56,6 +56,6 @@ if __name__ == "__main__":
                       __dependencies__)
     # pylint: disable=W0703
     except Exception as err:
-        LOG.critical('Unexpected exception: %s' % err)
+        LOG.critical('Unexpected exception: %s', err)
         exit(1)
     # pylint: enable=W0703

@@ -46,7 +46,7 @@ def similar_positions(major, positions, pos_tol=DEFAULT_POSITION_TOLERANCE):
 
 # pylint: disable=R0902
 # pylint: disable=R0904
-class Mesh():
+class Mesh(object):
     """Generate a mesh geometry."""
 
     class Stream(object):
@@ -118,7 +118,7 @@ class Mesh():
         elif semantic == 'BLENDWEIGHT':
             self.skin_weights = values
         else:
-            LOG.warning('Unknown semantic:%s' % semantic)
+            LOG.warning('Unknown semantic:%s', semantic)
 
     def get_values(self, semantic):
         """Retrieve the mesh values for a specified semantic."""
@@ -147,7 +147,7 @@ class Mesh():
             values = self.skin_weights
         else:
             values = None
-            LOG.warning('Unknown semantic:%s' % semantic)
+            LOG.warning('Unknown semantic:%s', semantic)
         return values
 
     ###################################################################################################################
@@ -209,7 +209,7 @@ class Mesh():
         elif (ci3 == vindex):
             self.primitives[pindex] = (ci1, ci2, new_vindex)
         else:
-            LOG.error("Didn't find vertex:%i used on primitive:%i" % (vindex, pindex))
+            LOG.error("Didn't find vertex:%i used on primitive:%i", vindex, pindex)
 
     def generate_primitives(self, indexes):
         """Generate a list of primitives from a list of indexes."""
@@ -264,8 +264,8 @@ class Mesh():
         e2 = vmath.v3sub(v3, v1)
         e_other = vmath.v3sub(v3, v2)
         if (vmath.v3is_zero(e1, pos_tol) or vmath.v3is_zero(e2, pos_tol) or vmath.v3is_zero(e_other, pos_tol)):
-            LOG.warning("%s: Found degenerate primitive:%s with edge length < position tolerance[%g]:[%s,%s,%s]" %
-                        ("generate_normals", (i1, i2, i3), pos_tol, e1, e2, e_other))
+            LOG.warning("%s: Found degenerate primitive:%s with edge length < position tolerance[%g]:[%s,%s,%s]",
+                        "generate_normals", (i1, i2, i3), pos_tol, e1, e2, e_other)
             return (0, 0, 0)
         return vmath.v3normalize(vmath.v3cross(e1, e2))
 
@@ -286,8 +286,8 @@ class Mesh():
                 self.normals[i] = vmath.v3muls(n, lr)
             else:
                 self.normals[i] = zero
-                LOG.warning("%s: Found vertex[%i] with normal < normalizable tolerance[%g]:%s" %
-                            ("generate_normals", i, dont_norm_tol, n))
+                LOG.warning("%s: Found vertex[%i] with normal < normalizable tolerance[%g]:%s",
+                            "generate_normals", i, dont_norm_tol, n)
 
     def smooth_normals(self, include_uv_tol=False,
                              root_node=None,
@@ -401,7 +401,7 @@ class Mesh():
         (e21, e31, e32) = (vmath.v3sub(v2, v1), vmath.v3sub(v3, v1), vmath.v3sub(v3, v2))       # Generate edges
         # Ignore degenerates
         if (vmath.v3is_zero(e21, pos_tol) or vmath.v3is_zero(e31, pos_tol) or vmath.v3is_zero(e32, pos_tol)):
-            LOG.warning("%s: Found degenerate triangle:%s" % ("_generate_tangents_for_triangle", (i1, i2, i3)))
+            LOG.warning("%s: Found degenerate triangle:%s", "_generate_tangents_for_triangle", (i1, i2, i3))
         else:
             # Calculate tangent and binormal
             edge1 = [e21[0], uv2[0] - uv1[0], uv2[1] - uv1[1]]
@@ -430,7 +430,7 @@ class Mesh():
                                 tan_split_tol=DEFAULT_TANGENT_SPLIT_TOLERANCE):
         """Generate a NBT per vertex."""
         if 0 == len(self.uvs[0]): # We can't generate nbts without uvs
-            LOG.debug("Can't generate nbts without uvs:%i"% (len(self.uvs[0])))
+            LOG.debug("Can't generate nbts without uvs:%i", len(self.uvs[0]))
             return
         num_vertices = len(self.positions)
         self.tangents = [ (0, 0, 0) ] * num_vertices
@@ -466,8 +466,8 @@ class Mesh():
             if (vmath.v3lengthsq(t) > dont_norm_tol): # Ensure the tangent isn't tiny before normalizing it.
                 tangents.append(vmath.v3unitcube_clamp(vmath.v3normalize(t)))
             else:
-                LOG.warning("%s: Found vertex[%i] with tangent < normalizable tolerance[%g]:%s" %
-                            ("normalize_tangents", i, dont_norm_tol, t))
+                LOG.warning("%s: Found vertex[%i] with tangent < normalizable tolerance[%g]:%s",
+                            "normalize_tangents", i, dont_norm_tol, t)
                 tangents.append(zero)
         self.tangents = tangents
 
@@ -476,8 +476,8 @@ class Mesh():
             if (vmath.v3lengthsq(b) > dont_norm_tol):
                 binormals.append(vmath.v3unitcube_clamp(vmath.v3normalize(b)))
             else:
-                LOG.warning("%s: Found vertex[%i] with binormal < normalizable tolerance[%g]:%s" %
-                            ("normalize_tangents", i, dont_norm_tol, b))
+                LOG.warning("%s: Found vertex[%i] with binormal < normalizable tolerance[%g]:%s",
+                            "normalize_tangents", i, dont_norm_tol, b)
                 binormals.append(zero)
         self.binormals = binormals
 
@@ -533,8 +533,8 @@ class Mesh():
                                              dont_norm_tol=DEFAULT_DONT_NORMALIZE_TOLERANCE):
         """Create a new normal from the tangent and binormals."""
         if not len(self.tangents) or not len(self.binormals): # We can't generate normals without nbts
-            LOG.debug("Can't generate normals from nbts without tangets:%i and binormals:%i"
-                      % (len(self.tangents), len(self.binormals)))
+            LOG.debug("Can't generate normals from nbts without tangets:%i and binormals:%i",
+                      len(self.tangents), len(self.binormals))
             return
         num_vertices = len(self.normals)
         assert(num_vertices == len(self.tangents))

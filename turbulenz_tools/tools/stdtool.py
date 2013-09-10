@@ -92,7 +92,7 @@ def standard_include(infiles):
                     infile_json = json_load(infile_file)
                     definitions = merge_dictionaries(infile_json, definitions)
             else:
-                LOG.error('Missing file: %s' % infile)
+                LOG.error('Missing file: %s', infile)
         return JsonAsset(definitions=definitions)
     else:
         return JsonAsset()
@@ -202,18 +202,18 @@ def standard_main(parse, version, description, dependencies, parser = None):
     else:
         logging.basicConfig(level=logging.WARNING, stream=sys.stdout)
 
-    LOG.info("input: %s" % (options.input))
-    LOG.info("output: %s" % (options.output))
+    LOG.info("input: %s", options.input)
+    LOG.info("output: %s", options.output)
 
     if options.asset_url != '':
-        LOG.info("url: %s" % (options.asset_url))
+        LOG.info("url: %s", options.asset_url)
 
     if options.asset_root != '.':
-        LOG.info("root: %s" % (options.asset_root))
+        LOG.info("root: %s", options.asset_root)
 
     if options.definitions:
         for inc in options.definitions:
-            LOG.info("inc: %s" % (inc))
+            LOG.info("inc: %s", inc)
 
     # TODO - Database Options are currently disabled
     #

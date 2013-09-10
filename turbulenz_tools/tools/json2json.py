@@ -22,10 +22,10 @@ __dependencies__ = [ ]
 
 def merge(source_files, output_filename="default.json", output_metrics=True):
     """Utility function to merge JSON assets."""
-    LOG.info("%i assets -> %s" % (len(source_files), output_filename))
+    LOG.info("%i assets -> %s", len(source_files), output_filename)
     merged = { }
     for i, f in enumerate(source_files):
-        LOG.info("Processing:%03i:%s" % (i + 1, f))
+        LOG.info("Processing:%03i:%s", i + 1, f)
         try:
             with open(f, 'r') as source:
                 j = json_load(source)
@@ -34,16 +34,16 @@ def merge(source_files, output_filename="default.json", output_metrics=True):
                 else:
                     merged = j
         except IOError as e:
-            LOG.error("Failed processing: %s" % f)
-            LOG.error('  >> %s' % e)
+            LOG.error("Failed processing: %s", f)
+            LOG.error('  >> %s', e)
     try:
         with open(output_filename, 'w') as target:
-            LOG.info("Writing:%s" % output_filename)
+            LOG.info("Writing:%s", output_filename)
             json_encoder.FLOAT_REPR = float_to_string
             json_dump(merged, target, sort_keys=True, separators=(',', ':'))
     except IOError as e:
-        LOG.error('Failed processing: %s' % output_filename)
-        LOG.error('  >> %s' % e)
+        LOG.error('Failed processing: %s', output_filename)
+        LOG.error('  >> %s', e)
     else:
         if output_metrics:
             log_metrics(merged)

@@ -37,7 +37,7 @@ USERNAME_PATTERN = re_compile('^[a-z0-9]+[a-z0-9-]*$') # usernames
 PROJECT_SLUG_PATTERN = re_compile('^[a-zA-Z0-9\-]*$') # game
 # pylint: enable=C0301
 
-class DateRange:
+class DateRange(object):
     """Maintain a time range between two dates. If only a start time is given it will generate a 24 hour period
        starting at that time. Defaults to the start of the current day if no times are given"""
     def __init__(self, start=TODAY_START, end=None):
