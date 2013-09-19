@@ -32,7 +32,7 @@ from node import NodeName
 from mesh import Mesh
 # pylint: enable=W0403
 
-__version__ = '1.7.1'
+__version__ = '1.7.2'
 __dependencies__ = ['asset2json', 'node', 'mesh']
 
 def tag(t):
@@ -1922,6 +1922,11 @@ class Dae2PhysicsModel(object):
                         half_extents_e = shape_type_e.find(tag('half_extents'))
                         if half_extents_e is not None:
                             rigidbody['halfExtents'] = [float(x) for x in half_extents_e.text.split()]
+
+                    material_e = shape_e.find(tag('instance_physics_material'))
+                    if material_e is not None:
+                        material_name = tidy_name(material_e.get('url'))
+                        rigidbody['material'] = find_name(name_map, material_name)
 
                 material_e = technique_e.find(tag('instance_physics_material'))
                 if material_e is not None:
