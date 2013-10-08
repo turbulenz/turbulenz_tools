@@ -10,6 +10,18 @@ Turbulenz Python Tools Changes
 1.x-dev
 -------
 
+.. _version-1.0.3:
+
+1.0.3
+-----
+
+:release-date: 2013-10-08
+
+- Updated exportevents tool to support latest format of metrics from the Hub
+- Added support for a physics material to be exported in dae2json
+- Updated code to conform to Pylint 1.0.0 and updated .pylintrc file with new settings
+- Minor bugfixes in json2json tool
+
 .. _version-1.0.2:
 
 1.0.2
