@@ -1148,7 +1148,7 @@ class Dae2Effect(object):
         elif 'glow_map' in self.params:
             self.type = 'glowmap'
         elif 'diffuse' not in self.params:
-            self.type = 'flat'
+            self.type = 'constant'
             meta['normals'] = True
         else:
             meta['normals'] = True
