@@ -2219,8 +2219,7 @@ def _evaluate_node(node, time, target_data, global_scale):
     node_e = node.element
     node_id = node_e.get('id')
     for node_param_e in node_e:
-        overload_value = None
-        overload_attrib = None
+        overloads = []
         if target_data:
             if 'sid' in node_param_e.attrib:
                 sid = node_param_e.attrib['sid']
@@ -2230,13 +2229,12 @@ def _evaluate_node(node, time, target_data, global_scale):
                         (target_node_id, _, parameter) = channel['target'].partition('/')
                         (target_sid, _, target_attrib) = parameter.partition('.')
                         if target_node_id == node_id and target_sid == sid:
-                            overload_value = anim.evaluate(time, channel['sampler'])
-                            overload_attrib = target_attrib
+                            overloads.append((target_attrib, anim.evaluate(time, channel['sampler'])))
 
         child_type = untag(node_param_e.tag)
         if child_type == 'translate':
             offset = [ float(x) for x in node_param_e.text.split() ]
-            if overload_value is not None:
+            for overload_attrib, overload_value in overloads:
                 if overload_attrib == 'X':
                     offset[0] = overload_value
                 elif overload_attrib == 'Y':
@@ -2254,7 +2252,7 @@ def _evaluate_node(node, time, target_data, global_scale):
 
         elif child_type == 'rotate':
             rotate = [ float(x) for x in node_param_e.text.split() ]
-            if overload_value is not None:
+            for overload_attrib, overload_value in overloads:
                 if isinstance(overload_value, list):
                     rotate[0] = overload_value[0]
                     rotate[1] = overload_value[1]
@@ -2288,14 +2286,26 @@ def _evaluate_node(node, time, target_data, global_scale):
 
         elif child_type == 'scale':
             scale = [ float(x) for x in node_param_e.text.split() ]
+            for overload_attrib, overload_value in overloads:
+                if overload_attrib == 'X':
+                    scale[0] = overload_value
+                elif overload_attrib == 'Y':
+                    scale[1] = overload_value
+                elif overload_attrib == 'Z':
+                    scale[2] = overload_value
+                elif overload_attrib == '':
+                    scale = overload_value
             scale_matrix = vmath.m33(scale[0],      0.0,      0.0,
                                           0.0, scale[1],      0.0,
                                           0.0,      0.0, scale[2])
             matrix = vmath.m33mulm44(scale_matrix, matrix)
 
         elif child_type == 'matrix':
-            if overload_value is not None:
-                local_matrix = vmath.m44transpose(overload_value)
+            if len(overloads) > 1:
+                warning('Found multiple matrices animating a single node')
+            if overloads:
+                for overload_attrib, overload_value in overloads:
+                    local_matrix = vmath.m44transpose(overload_value)
             else:
                 local_matrix = vmath.m44transpose([ float(x) for x in node_param_e.text.split() ])
             if matrix != identity_matrix:
