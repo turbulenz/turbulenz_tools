@@ -10,6 +10,13 @@ Turbulenz Python Tools Changes
 1.x-dev
 -------
 
+.. _version-1.0.4:
+
+1.0.4
+-----
+
+:release-date: 2013-10-30
+
 - Fix support for multiple animation elements targeting the same attribute
 - Fix scale animation export when stored as separate axis components
 - Fix dae2json referencing a legacy flat effect in the shaders
