@@ -2302,7 +2302,7 @@ def _evaluate_node(node, time, target_data, global_scale):
 
         elif child_type == 'matrix':
             if len(overloads) > 1:
-                warning('Found multiple matrices animating a single node')
+                LOG.warning('Found multiple matrices animating a single node')
             if overloads:
                 for overload_attrib, overload_value in overloads:
                     local_matrix = vmath.m44transpose(overload_value)
