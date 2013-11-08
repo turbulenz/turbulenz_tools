@@ -29,7 +29,8 @@ setup(name='turbulenz_tools',
         'simplejson>=2.1.5',
         'jinja2>=2.4',
         'PyYAML>=3.09',
-        'jsmin>=2.0.2'
+        'jsmin>=2.0.2',
+        'urllib3>=1.7.1'
         ],
     scripts=SCRIPTS,
     packages=[ 'turbulenz_tools', 'turbulenz_tools.tools', 'turbulenz_tools.utils' ],
