@@ -208,7 +208,7 @@ def html_generate(env, options, input_js, input_html):
 
     try:
         with open(options.output, "wb") as f:
-            f.write(res)
+            f.write(res.encode('utf-8'))
     except IOError:
         raise ToolsException("failed to create file: %s" % options.output)
 

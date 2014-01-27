@@ -237,7 +237,7 @@ def tzjs_generate(env, options, input_js):
         p = subprocess.Popen(strip_cmd, shell=True,
                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
-        (stripped_js, err) = p.communicate(rendered_js)
+        (stripped_js, err) = p.communicate(rendered_js.encode('utf-8'))
         strip_retval = p.wait()
 
         if 0 != strip_retval:

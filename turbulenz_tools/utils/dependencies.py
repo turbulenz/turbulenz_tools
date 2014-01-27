@@ -39,8 +39,8 @@ def find_dependencies(input_file, templatedirs, env, exceptions=[]):
 
         # Parse the file and extract the list of references
 
-        with open(file_path) as f:
-            ast = env.parse(f.read())
+        with open(file_path, "r") as f:
+            ast = env.parse(f.read().decode('utf-8'))
 
             # For each reference, find the absolute path.  If no file
             # is found and the reference was not listed in exceptions,
