@@ -10,6 +10,17 @@ Turbulenz Python Tools Changes
 1.x-dev
 -------
 
+.. _version-1.0.5:
+
+1.0.5
+-----
+
+:release-date: 2014-02-03
+
+- Add support for non-ascii encoded source files in makehtml and maketzjs
+- Fix missing dependency on urllib3 for the export events tool
+- Fix incorrect log call in dae2json
+
 .. _version-1.0.4:
 
 1.0.4

@@ -10,7 +10,7 @@ The tools are primarily related to asset and code generation and optimization fo
 History
 =======
 
-The latest release is 1.0.4 which can be found here `<https://pypi.python.org/pypi/turbulenz_tools/1.0.4>`_
+The latest release is 1.0.5 which can be found here `<https://pypi.python.org/pypi/turbulenz_tools/1.0.5>`_
 
 A full history of changes can be found in the
 `Changelog <http://github.com/turbulenz/turbulenz_tools/blob/master/CHANGES.rst>`_
