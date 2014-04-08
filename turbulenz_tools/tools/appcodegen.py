@@ -451,6 +451,8 @@ def default_add_code(options, context, rendered_js, inc_js):
     if options.mode in [ 'canvas', 'canvas-debug' ]:
 
         tz_engine_div += """
+
+        <style>#turbulenz_game_engine_canvas { -ms-touch-action: none; }</style>
         <canvas id="turbulenz_game_engine_canvas" moz-opaque="true" tabindex="1">
             Sorry, but your browser does not support WebGL or does not have it
             enabled.  To get a WebGL-enabled browser, please see:<br/>
