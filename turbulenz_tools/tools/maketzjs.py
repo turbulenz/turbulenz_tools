@@ -46,7 +46,7 @@ def _parser():
     # Mode one of [ 'plugin', 'canvas' ]
     parser.add_option("-m", "--mode", action="store", dest="mode",
                       default='plugin', help="build mode: canvas, "
-                      "plugin(default)")
+                      "plugin(default), webworker, webworker-debug")
 
     parser.add_option("--ignore-input-extension", action="store_true",
                       dest="ignore_ext_check", default=False,
@@ -81,6 +81,9 @@ def _parser():
     parser.add_option("--strip-var", action="append", dest="stripvars",
                       help="define a global bool var for static code stripping "
                       "(see strip-debug -D flag)", default=[])
+    parser.add_option("--noinject", action="append", dest="noinject",
+                      help="dont inject any extra Turbulenz code"
+                      , default=[])
 
     parser.add_option("--ignore-errors", action="store_true",
                       dest="ignoreerrors", default=False,
@@ -265,7 +268,7 @@ def tzjs_generate(env, options, input_js):
     # If required, compact the JS via a temporary file, otherwise just
     # write out directly to the output file.
 
-    if options.yui or options.closure or options.uglifyjs:
+    if options.mode != 'webworker-debug' and (options.yui or options.closure or options.uglifyjs):
 
         Profiler.start('compact')
 
@@ -308,7 +311,7 @@ def main():
         parser.print_help()
         exit(1)
 
-    if options.mode not in [ 'plugin', 'canvas' ]:
+    if options.mode not in [ 'plugin', 'canvas', 'webworker', 'webworker-debug']:
         LOG.error("invalid mode %s", options.mode)
         parser.print_help()
         exit(1)

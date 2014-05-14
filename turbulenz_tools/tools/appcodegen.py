@@ -177,6 +177,10 @@ def render_js(context, options, templates_js, inject_js):
     if options.mode in [ 'plugin', 'canvas' ]:
         out.append('(function () {')
 
+    if options.mode in ['webworker', 'webworker-debug']:
+        out.append("""TurbulenzEngine = {};
+""")
+
     # Functions for handling includes
 
     def _find_include_or_error(name):
@@ -209,6 +213,18 @@ def render_js(context, options, templates_js, inject_js):
         inc_js.append(rel_path)
         return ""
 
+    def handle_javascript_webworker_dev(name):
+        file_path = _find_include_or_error(name)
+        if file_path in includes_seen:
+            LOG.info(" include '%s' (%s) already listed", name, file_path)
+            return ""
+        includes_seen.append(file_path)
+
+        rel_path = os.path.relpath(file_path, outfile_dir).replace('\\', '/')
+
+        return """importScripts("%s");
+""" % rel_path
+
     def handle_javascript_release(name):
         if options.stripdebug and os.path.basename(name) == "debug.js":
             LOG.warning("App attempting to include debug.js.  Removing.")
@@ -227,8 +243,10 @@ def render_js(context, options, templates_js, inject_js):
             # strip out any "use strict"; lines
             return regex_use_strict.sub('', d)
 
-    if options.mode in [ 'plugin', 'canvas' ]:
+    if options.mode in [ 'plugin', 'canvas', 'webworker' ]:
         handle_javascript = handle_javascript_release
+    elif options.mode == 'webworker-debug':
+        handle_javascript = handle_javascript_webworker_dev
     else:
         handle_javascript = handle_javascript_dev
     context['javascript'] = handle_javascript
@@ -360,8 +378,9 @@ def context_from_options(options, title):
     context['tz_app_title_name_var'] = title
     context['tz_app_title_var'] = title
 
-    context['tz_development'] = options.mode in [ 'plugin-debug', 'canvas-debug' ]
+    context['tz_development'] = options.mode in [ 'plugin-debug', 'canvas-debug', 'webworker-debug' ]
     context['tz_canvas'] = options.mode in [ 'canvas', 'canvas-debug' ]
+    context['tz_webworker'] = options.mode in [ 'webworker', 'webworker-debug' ]
     context['tz_hybrid'] = options.hybrid
 
     return context
