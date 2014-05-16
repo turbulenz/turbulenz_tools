@@ -10,6 +10,9 @@ Turbulenz Python Tools Changes
 1.x-dev
 -------
 
+2014-05-16
+- Added 'webworker' and 'webworker-debug' build modes to MakeTZJS
+
 .. _version-1.0.5:
 
 1.0.5

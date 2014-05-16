@@ -26,7 +26,7 @@ from optparse import OptionParser, TitledHelpFormatter
 
 import subprocess
 
-__version__ = '1.2.0'
+__version__ = '1.3.0'
 __dependencies__ = ['turbulenz_tools.utils.subproc', 'turbulenz_tools.utils.dependencies',
                     'turbulenz_tools.tools.appcodegen']
 
