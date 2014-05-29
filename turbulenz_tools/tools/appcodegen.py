@@ -177,9 +177,12 @@ def render_js(context, options, templates_js, inject_js):
     if options.mode in [ 'plugin', 'canvas' ]:
         out.append('(function () {')
 
-    if options.mode in ['webworker', 'webworker-debug']:
-        out.append("""TurbulenzEngine = {};
-""")
+    if options.mode == 'webworker':
+        out.append('TurbulenzEngine = {};')
+
+    if options.mode == 'webworker-debug':
+        out.append('TurbulenzEngine = {};')
+        out.append("importScripts('jslib/debug.js');")
 
     # Functions for handling includes
 
@@ -222,8 +225,7 @@ def render_js(context, options, templates_js, inject_js):
 
         rel_path = os.path.relpath(file_path, outfile_dir).replace('\\', '/')
 
-        return """importScripts("%s");
-""" % rel_path
+        return """importScripts("%s");""" % rel_path
 
     def handle_javascript_release(name):
         if options.stripdebug and os.path.basename(name) == "debug.js":
