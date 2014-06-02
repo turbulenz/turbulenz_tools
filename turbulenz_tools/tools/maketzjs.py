@@ -4,7 +4,7 @@
 from turbulenz_tools.utils.dependencies import find_dependencies
 from turbulenz_tools.utils.subproc import SubProc
 from turbulenz_tools.utils.profiler import Profiler
-
+from turbulenz_tools.tools.templates import read_file_utf8
 from turbulenz_tools.tools.templates import env_create
 from turbulenz_tools.tools.templates import env_load_templates
 
@@ -194,6 +194,11 @@ def tzjs_generate(env, options, input_js):
     # If required, remove all calls to 'debug.*' methods BEFORE
     # compacting
 
+    # TODO: We write and read the files too many times.  Better to
+    # write once to a temporary, keep track of the name and invoke
+    # each external command on files, creating subsequent temporaries
+    # as required.
+
     if options.stripdebug:
 
         strip_path = "strip-debug"
@@ -232,30 +237,31 @@ def tzjs_generate(env, options, input_js):
         # Launch the strip command and pass in the full script via
         # streams.
 
-        strip_cmd = "%s %s" % (strip_path, strip_debug_flags)
+        with NamedTemporaryFile(delete = False) as t:
+            LOG.info("Writing temp JS to '%s'", t.name)
+            t.write(rendered_js)
+
+        with NamedTemporaryFile(delete = False) as tmp_out:
+            pass
+
+        strip_cmd = "%s %s -o %s %s" % (strip_path, strip_debug_flags,
+                                     tmp_out.name, t.name)
         LOG.info("Strip cmd: %s", strip_cmd)
-        p = subprocess.Popen(strip_cmd, shell=True,
-                             stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-        (stripped_js, err) = p.communicate(rendered_js)
-        strip_retval = p.wait()
+        strip_retval = subprocess.call(strip_cmd, shell=True)
 
         if 0 != strip_retval:
-            with NamedTemporaryFile(delete = False) as t:
-                t.write(rendered_js)
-
             raise ToolsException( \
                 "strip-debug tool exited with code %d and stderr:\n\n%s\n"
-                "The (merged) input probably contains a syntax error.  It has "
-                "been written to:\n  %s\nfor inspection." \
-                    % (strip_retval, err, t.name))
+                "The (merged) input probably contains a syntax error:\n"
+                "  %s" % (strip_retval, err, t.name))
 
         if not err is None and len(err) > 0:
             print "error output from strip-debug tool:"
             print "%s" % err
 
-
-        rendered_js = stripped_js
+        rendered_js = read_file_utf8(tmp_out.name).encode('utf-8')
+        remove(tmp_out.name)
+        remove(t.name)
 
         Profiler.stop('strip_debug')
 
