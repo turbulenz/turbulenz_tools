@@ -186,6 +186,7 @@ def tzjs_generate(env, options, input_js):
     Profiler.start('render_js')
     (rendered_js, inc_js) = render_js(context, options, templates_js,
                                       inject_js)
+    rendered_js = rendered_js.encode('utf-8')
     Profiler.stop('render_js')
 
     if 0 != len(inc_js):

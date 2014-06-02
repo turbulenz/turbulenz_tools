@@ -263,7 +263,7 @@ def render_js(context, options, templates_js, inject_js):
 
     # Combine all parts into a single string
 
-    return ("\n".join(out).encode('utf-8'), inc_js)
+    return ("\n".join(out), inc_js)
 
 def render_js_extract_includes(context, options, templates_js, injects):
     """
