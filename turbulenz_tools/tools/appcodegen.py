@@ -182,7 +182,7 @@ def render_js(context, options, templates_js, inject_js):
 
     if options.mode == 'webworker-debug':
         out.append('TurbulenzEngine = {};')
-        out.append("importScripts('jslib/debug.js');")
+        out.append('importScripts("jslib/debug.js");')
 
     # Functions for handling includes
 
