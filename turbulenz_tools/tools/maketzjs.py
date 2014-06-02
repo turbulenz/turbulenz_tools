@@ -255,10 +255,6 @@ def tzjs_generate(env, options, input_js):
                 "The (merged) input probably contains a syntax error:\n"
                 "  %s" % (strip_retval, err, t.name))
 
-        if not err is None and len(err) > 0:
-            print "error output from strip-debug tool:"
-            print "%s" % err
-
         rendered_js = read_file_utf8(tmp_out.name).encode('utf-8')
         remove(tmp_out.name)
         remove(t.name)
