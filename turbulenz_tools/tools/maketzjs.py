@@ -81,9 +81,6 @@ def _parser():
     parser.add_option("--strip-var", action="append", dest="stripvars",
                       help="define a global bool var for static code stripping "
                       "(see strip-debug -D flag)", default=[])
-    parser.add_option("--noinject", action="append", dest="noinject",
-                      help="dont inject any extra Turbulenz code"
-                      , default=[])
 
     parser.add_option("--ignore-errors", action="store_true",
                       dest="ignoreerrors", default=False,
@@ -311,7 +308,7 @@ def main():
         parser.print_help()
         exit(1)
 
-    if options.mode not in [ 'plugin', 'canvas', 'webworker', 'webworker-debug']:
+    if options.mode not in [ 'plugin', 'canvas', 'webworker', 'webworker-debug' ]:
         LOG.error("invalid mode %s", options.mode)
         parser.print_help()
         exit(1)
