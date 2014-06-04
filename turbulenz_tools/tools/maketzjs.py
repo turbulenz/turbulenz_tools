@@ -252,9 +252,9 @@ def tzjs_generate(env, options, input_js):
 
         if 0 != strip_retval:
             raise ToolsException( \
-                "strip-debug tool exited with code %d and stderr:\n\n%s\n"
+                "strip-debug tool exited with code %d\n"
                 "The (merged) input probably contains a syntax error:\n"
-                "  %s" % (strip_retval, err, t.name))
+                "  %s" % (strip_retval, t.name))
 
         rendered_js = read_file_utf8(tmp_out.name).encode('utf-8')
         remove(tmp_out.name)
