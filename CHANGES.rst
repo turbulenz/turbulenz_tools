@@ -10,8 +10,16 @@ Turbulenz Python Tools Changes
 1.x-dev
 -------
 
-2014-05-16
+.. _version-1.0.6:
+
+1.0.6
+-----
+
+:release-date: 2014-06-24
+
 - Added 'webworker' and 'webworker-debug' build modes to MakeTZJS
+- Fix further issues with non-ascii encoded input files
+- Fix for canvas elements not getting correct touch events on some browsers
 
 .. _version-1.0.5:
 
