@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2013 Turbulenz Limited
+# Copyright (c) 2009-2014 Turbulenz Limited
 """
 Mesh class used to hold and process vertex streams.
 
@@ -10,8 +10,8 @@ import logging
 LOG = logging.getLogger('asset')
 
 # pylint: disable=W0403
-import vmath
-import pointmap
+import turbulenz_tools.tools.vmath as vmath
+import turbulenz_tools.tools.pointmap as pointmap
 # pylint: enable=W0403
 
 __version__ = '1.1.0'
@@ -202,11 +202,11 @@ class Mesh(object):
         self.positions.append(self.positions[vindex])           # Clone the position
         self.uvs[0].append(new_uv)                                 # Create a new UV
         (ci1, ci2, ci3) = self.primitives[pindex]               # Update the primitive to use the new vindex
-        if (ci1 == vindex):
+        if ci1 == vindex:
             self.primitives[pindex] = (new_vindex, ci2, ci3)
-        elif (ci2 == vindex):
+        elif ci2 == vindex:
             self.primitives[pindex] = (ci1, new_vindex, ci3)
-        elif (ci3 == vindex):
+        elif ci3 == vindex:
             self.primitives[pindex] = (ci1, ci2, new_vindex)
         else:
             LOG.error("Didn't find vertex:%i used on primitive:%i", vindex, pindex)
@@ -263,14 +263,14 @@ class Mesh(object):
         e1 = vmath.v3sub(v2, v1)
         e2 = vmath.v3sub(v3, v1)
         e_other = vmath.v3sub(v3, v2)
-        if (vmath.v3is_zero(e1, pos_tol) or vmath.v3is_zero(e2, pos_tol) or vmath.v3is_zero(e_other, pos_tol)):
+        if vmath.v3is_zero(e1, pos_tol) or vmath.v3is_zero(e2, pos_tol) or vmath.v3is_zero(e_other, pos_tol):
             LOG.warning("%s: Found degenerate primitive:%s with edge length < position tolerance[%g]:[%s,%s,%s]",
                         "generate_normals", (i1, i2, i3), pos_tol, e1, e2, e_other)
             return (0, 0, 0)
         return vmath.v3normalize(vmath.v3cross(e1, e2))
 
     def generate_normals(self, pos_tol=DEFAULT_POSITION_TOLERANCE,
-                               dont_norm_tol=DEFAULT_DONT_NORMALIZE_TOLERANCE):
+                         dont_norm_tol=DEFAULT_DONT_NORMALIZE_TOLERANCE):
         """Generate a normal per vertex as an average of face normals the primitive is part of."""
         zero = (0, 0, 0)
         self.normals = [zero] * len(self.positions)
@@ -281,7 +281,7 @@ class Mesh(object):
             self.normals[i3] = vmath.v3add(self.normals[i3], n)
         for i, n in enumerate(self.normals):
             lsq = vmath.v3lengthsq(n)
-            if (lsq > dont_norm_tol): # Ensure normal isn't tiny before normalizing it.
+            if lsq > dont_norm_tol: # Ensure normal isn't tiny before normalizing it.
                 lr = 1.0 / math.sqrt(lsq)
                 self.normals[i] = vmath.v3muls(n, lr)
             else:
@@ -290,10 +290,10 @@ class Mesh(object):
                             "generate_normals", i, dont_norm_tol, n)
 
     def smooth_normals(self, include_uv_tol=False,
-                             root_node=None,
-                             pos_tol=DEFAULT_POSITION_TOLERANCE,
-                             nor_smooth_tol=DEFAULT_NORMAL_SMOOTH_TOLERANCE,
-                             uv_tol=DEFAULT_UV_TOLERANCE):
+                       root_node=None,
+                       pos_tol=DEFAULT_POSITION_TOLERANCE,
+                       nor_smooth_tol=DEFAULT_NORMAL_SMOOTH_TOLERANCE,
+                       uv_tol=DEFAULT_UV_TOLERANCE):
         """Smooth normals within a certain position range and normal divergence limit."""
 
         if not root_node:
@@ -400,7 +400,7 @@ class Mesh(object):
         (uv1, uv2, uv3) = (uvs[i1], uvs[i2], uvs[i3])                                           # Vertex UVs
         (e21, e31, e32) = (vmath.v3sub(v2, v1), vmath.v3sub(v3, v1), vmath.v3sub(v3, v2))       # Generate edges
         # Ignore degenerates
-        if (vmath.v3is_zero(e21, pos_tol) or vmath.v3is_zero(e31, pos_tol) or vmath.v3is_zero(e32, pos_tol)):
+        if vmath.v3is_zero(e21, pos_tol) or vmath.v3is_zero(e31, pos_tol) or vmath.v3is_zero(e32, pos_tol):
             LOG.warning("%s: Found degenerate triangle:%s", "_generate_tangents_for_triangle", (i1, i2, i3))
         else:
             # Calculate tangent and binormal
@@ -426,8 +426,8 @@ class Mesh(object):
     # pylint: enable=R0914
 
     def generate_tangents(self, pos_tol=DEFAULT_POSITION_TOLERANCE,
-                                zero_tol=DEFAULT_ZERO_TOLERANCE,
-                                tan_split_tol=DEFAULT_TANGENT_SPLIT_TOLERANCE):
+                          zero_tol=DEFAULT_ZERO_TOLERANCE,
+                          tan_split_tol=DEFAULT_TANGENT_SPLIT_TOLERANCE):
         """Generate a NBT per vertex."""
         if 0 == len(self.uvs[0]): # We can't generate nbts without uvs
             LOG.debug("Can't generate nbts without uvs:%i", len(self.uvs[0]))
@@ -463,7 +463,7 @@ class Mesh(object):
 
         tangents = [ ]
         for i, t in enumerate(self.tangents):
-            if (vmath.v3lengthsq(t) > dont_norm_tol): # Ensure the tangent isn't tiny before normalizing it.
+            if vmath.v3lengthsq(t) > dont_norm_tol: # Ensure the tangent isn't tiny before normalizing it.
                 tangents.append(vmath.v3unitcube_clamp(vmath.v3normalize(t)))
             else:
                 LOG.warning("%s: Found vertex[%i] with tangent < normalizable tolerance[%g]:%s",
@@ -473,7 +473,7 @@ class Mesh(object):
 
         binormals = [ ]
         for i, b in enumerate(self.binormals):
-            if (vmath.v3lengthsq(b) > dont_norm_tol):
+            if vmath.v3lengthsq(b) > dont_norm_tol:
                 binormals.append(vmath.v3unitcube_clamp(vmath.v3normalize(b)))
             else:
                 LOG.warning("%s: Found vertex[%i] with binormal < normalizable tolerance[%g]:%s",
@@ -482,10 +482,10 @@ class Mesh(object):
         self.binormals = binormals
 
     def smooth_tangents(self, include_uv_tol=False,
-                              root_node=None,
-                              pos_tol=DEFAULT_POSITION_TOLERANCE,
-                              nor_smooth_tol=DEFAULT_NORMAL_SMOOTH_TOLERANCE,
-                              uv_tol=DEFAULT_UV_TOLERANCE):
+                        root_node=None,
+                        pos_tol=DEFAULT_POSITION_TOLERANCE,
+                        nor_smooth_tol=DEFAULT_NORMAL_SMOOTH_TOLERANCE,
+                        uv_tol=DEFAULT_UV_TOLERANCE):
         """Smooth the tangents of vertices with similar positions."""
         def tangents_are_similar(t1, t2, b1, b2, nor_smooth_tol):
             """Test if both the tangents and binormals are similar."""
@@ -530,21 +530,21 @@ class Mesh(object):
                 self.binormals[i] = smooth_binormal
 
     def generate_normals_from_tangents(self, zero_tol=DEFAULT_ZERO_TOLERANCE,
-                                             dont_norm_tol=DEFAULT_DONT_NORMALIZE_TOLERANCE):
+                                       dont_norm_tol=DEFAULT_DONT_NORMALIZE_TOLERANCE):
         """Create a new normal from the tangent and binormals."""
         if not len(self.tangents) or not len(self.binormals): # We can't generate normals without nbts
             LOG.debug("Can't generate normals from nbts without tangets:%i and binormals:%i",
                       len(self.tangents), len(self.binormals))
             return
         num_vertices = len(self.normals)
-        assert(num_vertices == len(self.tangents))
-        assert(num_vertices == len(self.binormals))
+        assert num_vertices == len(self.tangents)
+        assert num_vertices == len(self.binormals)
         # Regenerate the vertex normals from the new tangents and binormals
         for i in range(num_vertices):
             normal = self.normals[i]
             cp = vmath.v3cross(self.tangents[i], self.binormals[i])
             # Keep vertex normal if the tangent and the binormal are paralel
-            if (vmath.v3lengthsq(cp) > dont_norm_tol):
+            if vmath.v3lengthsq(cp) > dont_norm_tol:
                 cp = vmath.v3normalize(cp)
                 # Keep vertex normal if new normal is *somehow* in the primitive plane
                 cosangle = vmath.v3dot(cp, normal)
@@ -882,7 +882,7 @@ class Mesh(object):
 
     # pylint: disable=R0914
     def make_convex_hull(self, positions=None, collinear_tolerance=DEFAULT_COLLINEAR_TOLERANCE,
-                               coplanar_tolerance=DEFAULT_COPLANAR_TOLERANCE):
+                         coplanar_tolerance=DEFAULT_COPLANAR_TOLERANCE):
         """Convert set of positions into a minimal set of positions required to form their convex hull
            Together with a set of primitives representing a triangulation of the hull's surface as a
            new Mesh"""
@@ -1021,9 +1021,9 @@ class Mesh(object):
                 new_index += 1
 
             # Form triangle iff no edge is closed.
-            if ((i0, i1) not in closedset and
-                (i1, i2) not in closedset and
-                (i2, i0) not in closedset):
+            if ( (i0, i1) not in closedset and
+                 (i1, i2) not in closedset and
+                 (i2, i0) not in closedset ):
 
                 outtriangles.append((i0, i1, i2))
                 # Mark visited edges. Open new edges.
@@ -1064,7 +1064,7 @@ class Mesh(object):
         self.primitives.extend([(i1 + offset, i2 + offset, i3 + offset) for (i1, i2, i3) in primitives])
 
     def convex_hulls(self, max_components=-1, allow_non_hulls=False,
-                           planar_vertex_count=DEFAULT_PLANAR_HULL_VERTEX_THRESHOLD):
+                     planar_vertex_count=DEFAULT_PLANAR_HULL_VERTEX_THRESHOLD):
         """Split triangle mesh into set of unconnected convex hulls.
 
            If max_components != -1, then None will be returned should the number
@@ -1270,8 +1270,8 @@ def __generate_test_cube():
 
 if __name__ == "__main__":
     # pylint: disable=W0403
-    from asset2json import JsonAsset
-    from node import NodeName
+    from turbulenz_tools.tools.asset2json import JsonAsset
+    from turbulenz_tools.tools.node import NodeName
     # pylint: enable=W0403
     logging.basicConfig(level=logging.INFO)
 

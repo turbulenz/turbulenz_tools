@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2013 Turbulenz Limited
+# Copyright (c) 2009-2014 Turbulenz Limited
 """
 Utilities to simplify building a standard translater.
 """
@@ -12,7 +12,7 @@ from simplejson import load as json_load
 from optparse import OptionParser, OptionGroup, TitledHelpFormatter
 
 # pylint: disable=W0403
-from asset2json import JsonAsset
+from turbulenz_tools.tools.asset2json import JsonAsset
 from turbulenz_tools.utils.json_utils import merge_dictionaries
 # pylint: enable=W0403
 
@@ -139,10 +139,10 @@ def standard_parser(description, epilog=None, per_file_options=True):
                      help="only include objects of class TYPE in export.")
     group.add_option("-E", "--exclude-type", action="append", dest="exclude_types", default=None, metavar="TYPE",
                      help="exclude objects of class TYPE from export. "
-                          "Classes currently supported for include and exclude: "
-                          "geometries, nodes, animations, images, effects, materials, lights, "
-                          "physicsmaterials, physicsmodels and physicsnodes. "
-                          "CAUTION using these options can create incomplete assets which require fixup at runtime. ")
+                     "Classes currently supported for include and exclude: "
+                     "geometries, nodes, animations, images, effects, materials, lights, "
+                     "physicsmaterials, physicsmodels and physicsnodes. "
+                     "CAUTION using these options can create incomplete assets which require fixup at runtime. ")
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Asset Location Options")
@@ -151,8 +151,8 @@ def standard_parser(description, epilog=None, per_file_options=True):
     group.add_option("-a", "--assets", action="store", dest="asset_root", default=".", metavar="PATH",
                      help="PATH of the asset root")
     group.add_option("-d", "--definitions", action="append", dest="definitions", default=None, metavar="JSON_FILE",
-                     help="definition JSON_FILE to include in build, this option can be used repeatedly for multiple "
-                          "files")
+                     help="definition JSON_FILE to include in build, "
+                     "this option can be used repeatedly for multiple files")
     parser.add_option_group(group)
 
     if per_file_options:

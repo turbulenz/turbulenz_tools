@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2011,2013 Turbulenz Limited
+# Copyright (c) 2009-2011,2013-2014 Turbulenz Limited
 """
 Utility for manipluating Materials.
 """
@@ -58,5 +58,5 @@ class Material(dict):
     def remove(self, key):
         """Delete an attribute from the material."""
         if key in self:
-            del(self[key])
+            del self[key]
 # pylint: enable=R0904

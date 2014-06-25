@@ -1,4 +1,4 @@
-# Copyright (c) 2010-2011,2013 Turbulenz Limited
+# Copyright (c) 2010-2011,2013-2014 Turbulenz Limited
 """
 Python module that handles JSON asset disassembling into HTML.
 """
@@ -351,11 +351,11 @@ class Disassembler(object):
                     break
                 self.mark_up_element(output, k, v, i)
 
-            output.append('%s%s %s\n%s}\n%s' % (indent,
-                                               r.expand(self.node_path_string),
-                                               r.comment('(%i of %i %s)' % (self.dict_cull, num_values, parent)),
-                                               minor_indent,
-                                               r.close_span()))
+            output.append('%s%s %s\n%s}\n%s' % ( indent,
+                                                 r.expand(self.node_path_string),
+                                                 r.comment('(%i of %i %s)' % (self.dict_cull, num_values, parent)),
+                                                 minor_indent,
+                                                 r.close_span() ))
 
         else:
             output.append('%s{\n' % ((r.collapse() + ' ') if over_size_limit else ''))
@@ -377,7 +377,7 @@ class Disassembler(object):
         for i, (k, v) in enumerate(_values(json_asset)):
             if i == node_list[0]:
                 self._push(i)
-                if (len(node_list) == 1):
+                if len(node_list) == 1:
                     if isinstance(v, dict):
                         self.mark_up_dict(output, v, k, expand)
                     elif isinstance(v, list):

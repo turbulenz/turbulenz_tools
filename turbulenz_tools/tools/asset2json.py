@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2013 Turbulenz Limited
+# Copyright (c) 2009-2014 Turbulenz Limited
 """
 Asset class used to build Turbulenz JSON assets.
 """
@@ -11,11 +11,11 @@ from simplejson import encoder as json_encoder, dumps as json_dumps, dump as jso
 from types import StringType
 
 # pylint: disable=W0403
-import vmath
+import turbulenz_tools.tools.vmath as vmath
 
 from turbulenz_tools.utils.json_utils import float_to_string, metrics
-from node import NodeName
-from material import Material
+from turbulenz_tools.tools.node import NodeName
+from turbulenz_tools.tools.material import Material
 # pylint: enable=W0403
 
 __version__ = '1.2.0'
@@ -298,7 +298,7 @@ class JsonAsset(object):
     def __retrieve_shape_instance(self,
                                   name=DEFAULT_NODE_NAME,
                                   shape_instance=DEFAULT_INSTANCE_NAME):
-        assert(isinstance(name, NodeName))
+        assert isinstance(name, NodeName)
         node = self.__retrieve_node(name)
         if 'geometryinstances' in node:
             geometry_instances = node['geometryinstances']
@@ -317,7 +317,7 @@ class JsonAsset(object):
     def __retrieve_light_instance(self,
                                   name=DEFAULT_NODE_NAME,
                                   light_instance=DEFAULT_INSTANCE_NAME):
-        assert(isinstance(name, NodeName))
+        assert isinstance(name, NodeName)
         node = self.__retrieve_node(name)
         if 'lightinstances' in node:
             light_instances = node['lightinstances']
@@ -508,7 +508,7 @@ class JsonAsset(object):
 
     def attach_texture(self, material, stage, filename):
         """Attach an image and linked parameter to the effect of the JSON representation."""
-        assert( material in self.asset['materials'] )
+        assert material in self.asset['materials']
         file_link = self.attach_image(filename)
         LOG.debug("material:%s:parameters:%s:%s", material, stage, filename)
         # Override the texture definition to redirect to this new shortcut to the image
@@ -516,7 +516,7 @@ class JsonAsset(object):
 
     def attach_node(self, name=DEFAULT_NODE_NAME, transform=None):
         """Attach a node with a transform to the JSON representation."""
-        assert(isinstance(name, NodeName))
+        assert isinstance(name, NodeName)
         if not transform:
             transform = self.default_transform
         node = self.__retrieve_node(name)
@@ -533,8 +533,8 @@ class JsonAsset(object):
                                    surface=None,
                                    disabled=False):
         """Attach a node connecting a shape, material and transform to the JSON representation."""
-        assert(isinstance(name, NodeName))
-        assert(shape in self.asset['geometries'])
+        assert isinstance(name, NodeName)
+        assert shape in self.asset['geometries']
         LOG.debug("nodes:%s:geometry:%s", name, shape)
         if not material in self.asset['materials']:
             LOG.info("nodes:%s:referencing missing material:%s", name, material)
@@ -554,7 +554,7 @@ class JsonAsset(object):
                                          shape_instance=DEFAULT_INSTANCE_NAME,
                                          attributes=None):
         """Copy the attributes onto the node."""
-        assert(isinstance(name, NodeName))
+        assert isinstance(name, NodeName)
         instance = self.__retrieve_shape_instance(name, shape_instance)
 
         if attributes:
@@ -566,7 +566,7 @@ class JsonAsset(object):
                                        shape_instance=DEFAULT_INSTANCE_NAME,
                                        material=DEFAULT_MATERIAL_NAME):
         """Attach a node connecting a material to the JSON representation."""
-        assert(isinstance(name, NodeName))
+        assert isinstance(name, NodeName)
         if not material in self.asset['materials']:
             LOG.info("nodes:%s:referencing missing material:%s", name, material)
         else:
@@ -579,8 +579,8 @@ class JsonAsset(object):
                                    light=DEFAULT_LIGHT_NAME,
                                    disabled=False):
         """Attach a node connecting a light and transform to the JSON representation."""
-        assert(isinstance(name, NodeName))
-        assert(light in self.asset['lights'])
+        assert isinstance(name, NodeName)
+        assert light in self.asset['lights']
         LOG.debug("nodes:%s:light:%s", name, light)
         instance = self.__retrieve_light_instance(name, light_instance)
         instance['light'] = light
@@ -589,7 +589,7 @@ class JsonAsset(object):
 
     def attach_node_attributes(self, name=DEFAULT_NODE_NAME, attributes=None):
         """Copy the attributes onto the node."""
-        assert(isinstance(name, NodeName))
+        assert isinstance(name, NodeName)
         node = self.__retrieve_node(name)
         if attributes:
             for k, v in attributes.iteritems():
@@ -689,12 +689,12 @@ class JsonAsset(object):
 #######################################################################################################################
 
     def attach_physics_material(self, physics_material_name=DEFAULT_PHYSICS_MATERIAL_NAME,
-                                      physics_material=None):
+                                physics_material=None):
         self.asset['physicsmaterials'][physics_material_name] = physics_material
 
     def attach_physics_model(self, physics_model=DEFAULT_PHYSICS_MODEL_NAME,
-                                   shape_name=DEFAULT_SHAPE_NAME, model=None, material=None,
-                                   shape_type="mesh"):
+                             shape_name=DEFAULT_SHAPE_NAME, model=None, material=None,
+                             shape_type="mesh"):
         """Attach a physics model to the JSON representation."""
         if model is None:
             model = { 'type': "rigid",
@@ -705,11 +705,11 @@ class JsonAsset(object):
         self.asset['physicsmodels'][physics_model] = model
 
     def attach_physics_node(self, physics_node_name=DEFAULT_PHYSICS_NODE_NAME,
-                                  physics_model=DEFAULT_PHYSICS_MODEL_NAME,
-                                  node_name=DEFAULT_NODE_NAME,
-                                  inline_parameters=None):
+                            physics_model=DEFAULT_PHYSICS_MODEL_NAME,
+                            node_name=DEFAULT_NODE_NAME,
+                            inline_parameters=None):
         """Attach a physics node to the JSON representation."""
-        assert(isinstance(node_name, NodeName))
+        assert isinstance(node_name, NodeName)
         physics_node = { 'body': physics_model, 'target': str(node_name) }
         if inline_parameters is not None:
             for k, v in inline_parameters.iteritems():

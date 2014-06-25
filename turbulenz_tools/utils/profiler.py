@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2013 Turbulenz Limited
+# Copyright (c) 2012-2014 Turbulenz Limited
 """
 Keep track of the cost of various points in code
 """
@@ -86,8 +86,7 @@ class ProfilerImpl(object):
             else:
                 duration = node.duration
             _indent_string = " "*_indent
-            print "%s%-16s - %s%.6f" % (_indent_string, node.name, _indent_string,
-                                    duration)
+            print "%s%-16s - %s%.6f" % (_indent_string, node.name, _indent_string, duration)
             for c in node.children:
                 _dump_node(c, _indent+2)
 
@@ -133,11 +132,11 @@ def _profiler_test():
     p.start('section1')
     p.stop('section1')
     roots = p.get_root_nodes()
-    assert(1 == len(roots))
+    assert 1 == len(roots)
     x = roots[0]
-    assert('section1' == x.name)
-    assert(x.duration > 0)
-    assert(0 == len(x.children))
+    assert 'section1' == x.name
+    assert x.duration > 0
+    assert 0 == len(x.children)
 
     ##################################################
 
@@ -165,31 +164,31 @@ def _profiler_test():
     p.stop ('section2')
 
     roots = p.get_root_nodes()
-    assert(2 == len(roots))
+    assert 2 == len(roots)
 
     s1 = roots[0]
-    assert('section1' == s1.name)
-    assert(s1.duration > 0)
-    assert(1 == len(s1.children) > 0)
+    assert 'section1' == s1.name
+    assert s1.duration > 0
+    assert 1 == len(s1.children) > 0
 
     s11 = s1.children[0]
-    assert('section1.1' == s11.name)
-    assert(1 == len(s11.children))
+    assert 'section1.1' == s11.name
+    assert 1 == len(s11.children)
 
     s111 = s11.children[0]
-    assert('section1.1.1' == s111.name)
-    assert(-1 == s111.duration)
-    assert(1 == len(s111.children))
+    assert 'section1.1.1' == s111.name
+    assert -1 == s111.duration
+    assert 1 == len(s111.children)
 
     s112 = s111.children[0]
-    assert('section1.1.2' == s112.name)
-    assert(0 < s112.duration)
-    assert(0 == len(s112.children))
+    assert 'section1.1.2' == s112.name
+    assert 0 < s112.duration
+    assert 0 == len(s112.children)
 
     s2 = roots[1]
-    assert('section2' == s2.name)
-    assert(0 < s2.duration)
-    assert(6 == len(s2.children))
+    assert 'section2' == s2.name
+    assert 0 < s2.duration
+    assert 6 == len(s2.children)
 
     p.dump_data()
 

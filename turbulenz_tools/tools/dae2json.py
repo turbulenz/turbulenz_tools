@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2010-2013 Turbulenz Limited
+# Copyright (c) 2010-2014 Turbulenz Limited
 """
 Convert Collada (.dae) files into a Turbulenz JSON asset.
 """
@@ -22,14 +22,14 @@ from xml.parsers.expat import ExpatError
 # pylint: disable=W0403
 import sys
 import math
-import vmath
 import subprocess
 
-from stdtool import standard_parser, standard_main, standard_include, standard_json_out
-from asset2json import JsonAsset, attach_skins_and_materials, remove_unreferenced_images
+from turbulenz_tools.tools.stdtool import standard_parser, standard_main, standard_include, standard_json_out
+from turbulenz_tools.tools.asset2json import JsonAsset, attach_skins_and_materials, remove_unreferenced_images
 
-from node import NodeName
-from mesh import Mesh
+import turbulenz_tools.tools.vmath as vmath
+from turbulenz_tools.tools.node import NodeName
+from turbulenz_tools.tools.mesh import Mesh
 # pylint: enable=W0403
 
 __version__ = '1.7.2'
@@ -508,7 +508,7 @@ class Dae2Geometry(object):
             indices_e = triangles_e.find(tag('p'))
             if indices_e is not None:
                 indices = [int(x) for x in indices_e.text.split()]
-                assert(3 * num_faces * indices_per_vertex == len(indices))
+                assert 3 * num_faces * indices_per_vertex == len(indices)
                 indices = invert_indices(indices, indices_per_vertex, 3)
                 self.surfaces[material] = Dae2Geometry.Surface(sources, indices, JsonAsset.SurfaceTriangles)
 
@@ -526,7 +526,7 @@ class Dae2Geometry(object):
             vertex_count_e = polylist_e.find(tag('vcount'))
             if vertex_count_e is not None:
                 vertex_count = [int(x) for x in vertex_count_e.text.split()]
-                assert(num_faces == len(vertex_count))
+                assert num_faces == len(vertex_count)
 
                 indices = [int(x) for x in indices_e.text.split()]
 
@@ -597,23 +597,23 @@ class Dae2Geometry(object):
                      'Check referencing node for physics properties otherwise', self.name)
             self.meta['graphics'] = True
 
+        def _find_material_from_instance_on_node(mat, node):
+            for instance in node.instance_geometry:
+                if instance.geometry == self.id:
+                    for surface, material in instance.materials.iteritems():
+                        if surface == mat:
+                            return material
+            for child in node.children:
+                material = _find_material_from_instance_on_node(mat, child)
+                if material is not None:
+                    return material
+            return None
+
         for mat_name in self.surfaces.iterkeys():
             # Ok, we have a mat_name but this may need to be mapped if the node has an instanced material.
             # So we find the node referencing this geometry, and see if the material has a mapping on it.
-            def _find_material_from_instance_on_node(n):
-                for instance in n.instance_geometry:
-                    if instance.geometry == self.id:
-                        for surface, material in instance.materials.iteritems():
-                            if surface == mat_name:
-                                return material
-                for child in n.children:
-                    material = _find_material_from_instance_on_node(child)
-                    if material is not None:
-                        return material
-                return None
-
             for _, node in nodes.iteritems():
-                instance_mat_name = _find_material_from_instance_on_node(node)
+                instance_mat_name = _find_material_from_instance_on_node(mat_name, node)
                 if instance_mat_name is not None:
                     LOG.debug('Using instance material:%s to %s', mat_name, instance_mat_name)
                     mat_name = instance_mat_name
@@ -1390,8 +1390,7 @@ class Dae2Node(object):
                     transpose = vmath.m44transpose([float(x) for x in bind_matrix_e.text.split()])
                     self.bind_matrix = vmath.m43from_m44(transpose)
                     self.bind_matrix = vmath.m43setpos(self.bind_matrix,
-                                                       vmath.v3muls(vmath.m43pos(self.bind_matrix),
-                                                       self.scale))
+                                                       vmath.v3muls(vmath.m43pos(self.bind_matrix), self.scale))
                 else:
                     self.bind_matrix = vmath.M43IDENTITY
 
@@ -1409,7 +1408,7 @@ class Dae2Node(object):
                             array_e = s.find(tag('IDREF_array'))
                             sids = False
                         count = int(array_e.get('count', '0'))
-                        if (0 < count):
+                        if 0 < count:
                             values_text = array_e.text
                             self.sources[s.get('id')] = { 'name': param_name,
                                                           'values': values_text.split(),
@@ -1417,14 +1416,14 @@ class Dae2Node(object):
                     elif param_type == 'float':
                         array_e = s.find(tag('float_array'))
                         count = int(array_e.get('count', '0'))
-                        if (0 < count):
+                        if 0 < count:
                             values_text = array_e.text
                             values = [float(x) for x in values_text.split()]
                             self.sources[s.get('id')] = { 'name': param_name, 'values': values }
                     elif param_type == 'float4x4':
                         array_e = s.find(tag('float_array'))
                         count = int(array_e.get('count', '0'))
-                        if (0 < count):
+                        if 0 < count:
                             values_text = array_e.text
                             float_values = [float(x) for x in values_text.split()]
                             values = [ ]
@@ -1472,12 +1471,10 @@ class Dae2Node(object):
 
                         bind_ltm = vmath.m43inverse(inv_bind_ltm)
                         bind_ltm = vmath.m43setpos(bind_ltm,
-                                                   vmath.v3muls(vmath.m43pos(bind_ltm),
-                                                   self.scale))
+                                                   vmath.v3muls(vmath.m43pos(bind_ltm), self.scale))
 
                         inv_bind_ltm = vmath.m43setpos(inv_bind_ltm,
-                                                       vmath.v3muls(vmath.m43pos(inv_bind_ltm),
-                                                       self.scale))
+                                                       vmath.v3muls(vmath.m43pos(inv_bind_ltm), self.scale))
                         inv_bind_ltm = vmath.m43mul(self.bind_matrix, inv_bind_ltm)
 
                         self.joint_names.append(node.name)
@@ -1521,7 +1518,7 @@ class Dae2Node(object):
                         weights_list.append((weight, index))
                     weights_list = sorted(weights_list, key=lambda weight: weight[0], reverse=True)
                     weight_scale = 1
-                    if (len(weights_list) > 4):
+                    if len(weights_list) > 4:
                         weight_sum = weights_list[0][0] + weights_list[1][0] + weights_list[2][0] + weights_list[3][0]
                         weight_scale = 1 / weight_sum
                     for i in range(0, 4):
@@ -1688,6 +1685,7 @@ class Dae2Node(object):
         if parent_matrix is not None:
             matrix = parent_matrix # Make sure we get a copy
 
+# pylint: disable=C0330
         for node_param_e in node_e:
             child_type = untag(node_param_e.tag)
             if child_type == 'translate':
@@ -1734,6 +1732,7 @@ class Dae2Node(object):
             elif child_type == 'matrix':
                 local_matrix = vmath.m44transpose(tuple([ float(x) for x in node_param_e.text.split() ]))
                 matrix = vmath.m44mul(local_matrix, matrix)
+# pylint: enable=C0330
 
         # Hard coded scale
         if global_scale != 1.0:
@@ -1783,7 +1782,7 @@ class Dae2Node(object):
 
         for instance_controller_e in node_e.findall(tag('instance_controller')):
             self.instance_controller.append(Dae2Node.InstanceController(instance_controller_e, global_scale,
-                                            controllers_e, None, geometries))
+                                                                        controllers_e, None, geometries))
 
         # Instanced nodes, processed like normal children but with custom prefixes
         for instance_node_e in node_e.findall(tag('instance_node')):
@@ -1793,7 +1792,8 @@ class Dae2Node(object):
                     instanced_node_e = find_node(instance_node_url, collada_e)
                     if instanced_node_e is not None:
                         self.children.append(Dae2Node(instanced_node_e, global_scale, self, None, node_name,
-                                             controllers_e, collada_e, name_map, node_names, node_map, geometries))
+                                                      controllers_e, collada_e, name_map, node_names, node_map,
+                                                      geometries))
                 else:
                     self.references.append(instance_node_url)
 
@@ -2096,14 +2096,14 @@ class Dae2Animation(object):
             if param_e.get('type').lower() == 'name':
                 array_e = s.find(tag('Name_array'))
                 count = int(array_e.get('count', '0'))
-                if (0 < count):
+                if 0 < count:
                     values_text = array_e.text
                     self.sources[s.get('id')] = { 'name': param_name, 'values': values_text.split() }
             else:
                 array_e = s.find(tag('float_array'))
                 count = int(array_e.get('count', '0'))
                 stride = int(accessor_e.get('stride', '1'))
-                if (0 < count):
+                if 0 < count:
                     values_text = array_e.text
                     float_values = [float(x) for x in values_text.split()]
                     if stride == 1:
@@ -2163,7 +2163,7 @@ class Dae2Animation(object):
                 start_val = values[start_key]
                 end_val = values[end_key]
                 if type(start_val) is float:
-                    return (start_val + delta * (end_val - start_val))
+                    return start_val + delta * (end_val - start_val)
                 else:
                     if len(start_val) != len(end_val):
                         LOG.error('Animation evaluation failed in animation:%s:due to mismatched keyframe sizes',
@@ -2231,6 +2231,7 @@ def _evaluate_node(node, time, target_data, global_scale):
                         if target_node_id == node_id and target_sid == sid:
                             overloads.append((target_attrib, anim.evaluate(time, channel['sampler'])))
 
+# pylint: disable=C0330
         child_type = untag(node_param_e.tag)
         if child_type == 'translate':
             offset = [ float(x) for x in node_param_e.text.split() ]
@@ -2260,6 +2261,7 @@ def _evaluate_node(node, time, target_data, global_scale):
                     rotate[3] = overload_value[3]
                 else:
                     rotate[3] = overload_value
+
             if rotate[3] != 0.0:
                 angle = rotate[3] / 180.0 * math.pi
                 if rotate[0] == 1.0 and rotate[1] == 0.0 and rotate[2] == 0.0:
@@ -2312,6 +2314,7 @@ def _evaluate_node(node, time, target_data, global_scale):
                 matrix = vmath.m44mul(local_matrix, matrix)
             else:
                 matrix = local_matrix
+# pylint: enable=C0330
 
     # Hard coded scale
     if global_scale != 1.0:
@@ -2654,6 +2657,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
             if unit_e is not None:
                 scale = float(unit_e.get('meter', '1.0'))
 
+# pylint: disable=C0330
             # What is the up axis?
             upaxis_rotate = None
             upaxis_e = asset_e.find(tag('up_axis'))
@@ -2669,6 +2673,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                                       0.0, 1.0,  0.0, 0.0,
                                       0.0, 0.0,  0.0, 1.0 ]
                 LOG.info('Up axis:%s', upaxis_e.text)
+# pylint: enable=C0330
 
             # Core COLLADA elements are:
             #
@@ -2899,8 +2904,8 @@ def main():
 
     parser = standard_parser(description)
     parser.add_option("--nvtristrip", action="store", dest="nvtristrip", default=None,
-            help="path to NvTriStripper, setting this enables "
-            "vertex cache optimizations")
+                      help="path to NvTriStripper, setting this enables "
+                      "vertex cache optimizations")
 
     standard_main(parse, __version__, description, __dependencies__, parser)
 

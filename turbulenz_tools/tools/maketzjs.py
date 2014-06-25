@@ -138,14 +138,14 @@ def tzjs_compact(options, infile, outfile):
 
     if options.yui is not None:
         command = ['java', '-jar', options.yui,
-                           '--line-break', str(options.length),
-                           '--type', 'js',
-                           '-o', outfile, infile]
+                   '--line-break', str(options.length),
+                   '--type', 'js',
+                   '-o', outfile, infile]
 
     elif options.closure is not None:
         command = ['java', '-jar', options.closure,
-                           '--js_output_file=' + outfile,
-                           '--js=' + infile]
+                   '--js_output_file=' + outfile,
+                   '--js=' + infile]
 
     elif options.uglifyjs is not None:
         # For nodejs on win32 we need posix style paths for the js
@@ -209,9 +209,10 @@ def tzjs_generate(env, options, input_js):
         LOG.info("Stripping debug method calls ...")
 
         # Check we can actually run strip debug, with the given path
-        p = subprocess.Popen('%s -h' % strip_path, stdout=subprocess.PIPE,
-                                                   stderr=subprocess.STDOUT,
-                                                   shell=True)
+        p = subprocess.Popen('%s -h' % strip_path,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT,
+                             shell=True)
         p.communicate()
         if p.returncode != 0:
             raise ToolsException( \
@@ -246,7 +247,7 @@ def tzjs_generate(env, options, input_js):
             pass
 
         strip_cmd = "%s %s -o %s %s" % (strip_path, strip_debug_flags,
-                                     tmp_out.name, t.name)
+                                        tmp_out.name, t.name)
         LOG.info("Strip cmd: %s", strip_cmd)
         strip_retval = subprocess.call(strip_cmd, shell=True)
 

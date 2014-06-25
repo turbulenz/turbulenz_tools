@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2010-2013 Turbulenz Limited
+# Copyright (c) 2010-2014 Turbulenz Limited
 
 import logging
 import simplejson as json
@@ -28,13 +28,13 @@ def _parser():
     parser.add_option("-o", "--output", action="store", dest="output", help="output file to process")
 
     parser.add_option("-l", "--listcull", action="store", dest="listcull", type="int", default=3, metavar="NUMBER",
-                     help="parameter of the list culling size. 0 - show all (defaults to 3)")
+                      help="parameter of the list culling size. 0 - show all (defaults to 3)")
     parser.add_option("-c", "--dictcull", action="store", dest="dictcull", type="int", default=3, metavar="NUMBER",
-                     help="parameter of the dictionary culling size. 0 - show all (defaults to 3)")
+                      help="parameter of the dictionary culling size. 0 - show all (defaults to 3)")
     parser.add_option("-p", "--path", action="store", dest="path", type="str", default=None,
-                     help="path of the required node in the asset tree structure (wildcards allowed)")
+                      help="path of the required node in the asset tree structure (wildcards allowed)")
     parser.add_option("-d", "--depth", action="store", dest="depth", type="int", default=2, metavar="NUMBER",
-                     help="parameter of the dictionary and list rendering depth (defaults to 2).")
+                      help="parameter of the dictionary and list rendering depth (defaults to 2).")
 
     parser.add_option("--html", action="store_true", dest="html", default=False,
                       help="output in html format")

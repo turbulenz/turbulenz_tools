@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2009-2013 Turbulenz Limited
+# Copyright (c) 2009-2014 Turbulenz Limited
 """
 Collection of math functions.
 """
@@ -33,12 +33,12 @@ def select(m, a, b):
     return b
 
 def rcp(a):
-    if (a != 0.0):
+    if a != 0.0:
         return 1 / a
     return 0.0
 
 def iszero(a, tolerance=PRECISION):
-    return (abs(a) < tolerance)
+    return abs(a) < tolerance
 
 
 #######################################################################################################################
@@ -46,7 +46,7 @@ def iszero(a, tolerance=PRECISION):
 def v2equal(a, b, tolerance=PRECISION):
     (a0, a1) = a
     (b0, b1) = b
-    return (abs(a0 - b0) <= tolerance and abs(a1 - b1) <= tolerance)
+    return abs(a0 - b0) <= tolerance and abs(a1 - b1) <= tolerance
 
 #######################################################################################################################
 
@@ -105,16 +105,16 @@ def v3madd(a, b, c):
 def v3dot(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a0 * b0) + (a1 * b1) + (a2 * b2))
+    return (a0 * b0) + (a1 * b1) + (a2 * b2)
 
 def v3cross(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a1 * b2) - (a2 * b1), (a2 * b0) - (a0 * b2), (a0 * b1) - (a1 * b0))
+    return (a1 * b2) - (a2 * b1), (a2 * b0) - (a0 * b2), (a0 * b1) - (a1 * b0)
 
 def v3lengthsq(a):
     (a0, a1, a2) = a
-    return ((a0 * a0) + (a1 * a1) + (a2 * a2))
+    return (a0 * a0) + (a1 * a1) + (a2 * a2)
 
 def v3length(a):
     (a0, a1, a2) = a
@@ -125,64 +125,60 @@ def v3distancesq(a, b):
 
 def v3recp(a):
     (a0, a1, a2) = a
-    return (rcp(a0), rcp(a1), rcp(a2))
+    return rcp(a0), rcp(a1), rcp(a2)
 
 def v3normalize(a):
     (a0, a1, a2) = a
     lsq = ((a0 * a0) + (a1 * a1) + (a2 * a2))
-    if (lsq > 0.0):
+    if lsq > 0.0:
         lr = 1.0 / math.sqrt(lsq)
-        return ((a0 * lr), (a1 * lr), (a2 * lr))
+        return (a0 * lr), (a1 * lr), (a2 * lr)
     return V3ZERO
 
 def v3abs(a):
     (a0, a1, a2) = a
-    return (abs(a0), abs(a1), abs(a2))
+    return abs(a0), abs(a1), abs(a2)
 
 def v3max(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return (max(a0, b0), max(a1, b1), max(a2, b2))
+    return max(a0, b0), max(a1, b1), max(a2, b2)
 
 def v3max3(a, b, c):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
     (c0, c1, c2) = c
-    return (max(max(a0, b0), c0), max(max(a1, b1), c1), max(max(a2, b2), c2))
+    return max(max(a0, b0), c0), max(max(a1, b1), c1), max(max(a2, b2), c2)
 
 def v3max4(a, b, c, d):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
     (c0, c1, c2) = c
     (d0, d1, d2) = d
-    return (max(max(a0, b0), max(c0, d0)),
-            max(max(a1, b1), max(c1, d1)),
-            max(max(a2, b2), max(c2, d2)))
+    return max(max(a0, b0), max(c0, d0)), max(max(a1, b1), max(c1, d1)), max(max(a2, b2), max(c2, d2))
 
 def v3min(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return (min(a0, b0), min(a1, b1), min(a2, b2))
+    return min(a0, b0), min(a1, b1), min(a2, b2)
 
 def v3min3(a, b, c):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
     (c0, c1, c2) = c
-    return (min(min(a0, b0), c0), min(min(a1, b1), c1), min(min(a2, b2), c2))
+    return min(min(a0, b0), c0), min(min(a1, b1), c1), min(min(a2, b2), c2)
 
 def v3min4(a, b, c, d):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
     (c0, c1, c2) = c
     (d0, d1, d2) = d
-    return (min(min(a0, b0), min(c0, d0)),
-            min(min(a1, b1), min(c1, d1)),
-            min(min(a2, b2), min(c2, d2)))
+    return min(min(a0, b0), min(c0, d0)), min(min(a1, b1), min(c1, d1)), min(min(a2, b2), min(c2, d2))
 
 def v3equal(a, b, tolerance=PRECISION):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return (abs(a0 - b0) <= tolerance and abs(a1 - b1) <= tolerance and abs(a2 - b2) <= tolerance)
+    return abs(a0 - b0) <= tolerance and abs(a1 - b1) <= tolerance and abs(a2 - b2) <= tolerance
 
 def v3mulm33(a, m):
     (a0, a1, a2) = a
@@ -193,98 +189,98 @@ def v3mulm33(a, m):
 def v3mequal(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((abs(a0 - b0) <= PRECISION), (abs(a1 - b1) <= PRECISION), (abs(a2 - b2) <= PRECISION))
+    return (abs(a0 - b0) <= PRECISION), (abs(a1 - b1) <= PRECISION), (abs(a2 - b2) <= PRECISION)
 
 def v3mless(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a0 < b0), (a1 < b1), (a2 < b2))
+    return (a0 < b0), (a1 < b1), (a2 < b2)
 
 def v3mgreater(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a0 > b0), (a1 > b1), (a2 > b2))
+    return (a0 > b0), (a1 > b1), (a2 > b2)
 
 def v3mgreatereq(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a0 >= b0), (a1 >= b1), (a2 >= b2))
+    return (a0 >= b0), (a1 >= b1), (a2 >= b2)
 
 def v3mnot(a):
     (a0, a1, a2) = a
-    return (not a0, not a1, not a2)
+    return not a0, not a1, not a2
 
 def v3mor(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a0 or b0), (a1 or b1), (a2 or b2))
+    return (a0 or b0), (a1 or b1), (a2 or b2)
 
 def v3mand(a, b):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a0 and b0), (a1 and b1), (a2 and b2))
+    return (a0 and b0), (a1 and b1), (a2 and b2)
 
 def v3select(m, a, b):
     (m0, m1, m2) = m
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return (select(m0, a0, b0), select(m1, a1, b1), select(m2, a2, b2))
+    return select(m0, a0, b0), select(m1, a1, b1), select(m2, a2, b2)
 
 def v3creates(a):
-    return (a, a, a)
+    return a, a, a
 
 def v3maxs(a, b):
     (a0, a1, a2) = a
-    return (max(a0, b), max(a1, b), max(a2, b))
+    return max(a0, b), max(a1, b), max(a2, b)
 
 def v3mins(a, b):
     (a0, a1, a2) = a
-    return (min(a0, b), min(a1, b), min(a2, b))
+    return min(a0, b), min(a1, b), min(a2, b)
 
 def v3adds(a, b):
     (a0, a1, a2) = a
-    return ((a0 + b), (a1 + b), (a2 + b))
+    return (a0 + b), (a1 + b), (a2 + b)
 
 def v3subs(a, b):
     (a0, a1, a2) = a
-    return ((a0 - b), (a1 - b), (a2 - b))
+    return (a0 - b), (a1 - b), (a2 - b)
 
 def v3muls(a, b):
     (a0, a1, a2) = a
-    if (b == 0):
+    if b == 0:
         return V3ZERO
-    return ((a0 * b), (a1 * b), (a2 * b))
+    return (a0 * b), (a1 * b), (a2 * b)
 
 def v3equals(a, b):
     (a0, a1, a2) = a
-    return (abs(a0 - b) <= PRECISION and abs(a1 - b) <= PRECISION and abs(a2 - b) <= PRECISION)
+    return abs(a0 - b) <= PRECISION and abs(a1 - b) <= PRECISION and abs(a2 - b) <= PRECISION
 
 def v3equalsm(a, b):
     (a0, a1, a2) = a
-    return ((abs(a0 - b) <= PRECISION), (abs(a1 - b) <= PRECISION), (abs(a2 - b) <= PRECISION))
+    return (abs(a0 - b) <= PRECISION), (abs(a1 - b) <= PRECISION), (abs(a2 - b) <= PRECISION)
 
 def v3lesssm(a, b):
     (a0, a1, a2) = a
-    return ((a0 > b), (a1 > b), (a2 > b))
+    return (a0 > b), (a1 > b), (a2 > b)
 
 def v3greatersm(a, b):
     (a0, a1, a2) = a
-    return ((a0 > b), (a1 > b), (a2 > b))
+    return (a0 > b), (a1 > b), (a2 > b)
 
 def v3greatereqsm(a, b):
     (a0, a1, a2) = a
-    return ((a0 >= b), (a1 >= b), (a2 >= b))
+    return (a0 >= b), (a1 >= b), (a2 >= b)
 
 def v3lerp(a, b, t):
     (a0, a1, a2) = a
     (b0, b1, b2) = b
-    return ((a0 + (b0 - a0) * t), (a1 + (b1 - a1) * t), (a2 + (b2 - a2) * t))
+    return (a0 + (b0 - a0) * t), (a1 + (b1 - a1) * t), (a2 + (b2 - a2) * t)
 
 def v3is_zero(a, tolerance=PRECISION):
-    return (abs(v3lengthsq(a)) < (tolerance * tolerance))
+    return abs(v3lengthsq(a)) < (tolerance * tolerance)
 
 def v3is_similar(a, b, tolerance=PRECISION):
-    return (v3dot(a, b) > tolerance)
+    return v3dot(a, b) > tolerance
 
 def v3is_within_tolerance(a, b, tolerance):
     """The tolerance must be defined as the square of the cosine angle tolerated. Returns True is 'a' is zero."""
@@ -299,19 +295,19 @@ def v3is_within_tolerance(a, b, tolerance):
 
 def v3unitcube_clamp(a):
     (a0, a1, a2) = a
-    if (a0 > 1.0):
+    if a0 > 1.0:
         a0 = 1.0
-    elif (a0 < -1.0):
+    elif a0 < -1.0:
         a0 = -1.0
-    if (a1 > 1.0):
+    if a1 > 1.0:
         a1 = 1.0
-    elif (a1 < -1.0):
+    elif a1 < -1.0:
         a1 = -1.0
-    if (a2 > 1.0):
+    if a2 > 1.0:
         a2 = 1.0
-    elif (a2 < -1.0):
+    elif a2 < -1.0:
         a2 = -.10
-    return (a0, a1, a2)
+    return a0, a1, a2
 
 #######################################################################################################################
 
@@ -325,7 +321,7 @@ def v3s_min_max(points):
         max_x = max(x, max_x)
         max_y = max(y, max_y)
         max_z = max(z, max_z)
-    return ((min_x, min_y, min_z), (max_x, max_y, max_z))
+    return (min_x, min_y, min_z), (max_x, max_y, max_z)
 
 #######################################################################################################################
 
@@ -337,11 +333,11 @@ V4TWO  = (2.0, 2.0, 2.0, 2.0)
 #######################################################################################################################
 
 def v4create(a, b, c, d):
-    return (a, b, c, d)
+    return a, b, c, d
 
 def v4neg(a):
     (a0, a1, a2, a3) = a
-    return (-a0, -a1, -a2, -a3)
+    return -a0, -a1, -a2, -a3
 
 def v4add(a, b):
     (a0, a1, a2, a3) = a
@@ -380,11 +376,11 @@ def v4madd(a, b, c):
 def v4dot(a, b):
     (a0, a1, a2, a3) = a
     (b0, b1, b2, b3) = b
-    return ((a0 * b0) + (a1 * b1) + (a2 * b2) + (a3 * b3))
+    return (a0 * b0) + (a1 * b1) + (a2 * b2) + (a3 * b3)
 
 def v4lengthsq(a):
     (a0, a1, a2, a3) = a
-    return ((a0 * a0) + (a1 * a1) + (a2 * a2) + (a3 * a3))
+    return (a0 * a0) + (a1 * a1) + (a2 * a2) + (a3 * a3)
 
 def v4length(a):
     (a0, a1, a2, a3) = a
@@ -397,7 +393,7 @@ def v4recp(a):
 def v4normalize(a):
     (a0, a1, a2, a3) = a
     lsq = ((a0 * a0) + (a1 * a1) + (a2 * a2) + (a3 * a3))
-    if (lsq > 0.0):
+    if lsq > 0.0:
         lr = 1.0 / math.sqrt(lsq)
         return ((a0 * lr), (a1 * lr), (a2 * lr), (a3 * lr))
     return V4ZERO
@@ -508,11 +504,11 @@ def v4mand(a, b):
 
 def v4many(m):
     (m0, m1, m2, m3) = m
-    return (m0 or m1 or m2 or m3)
+    return m0 or m1 or m2 or m3
 
 def v4mall(m):
     (m0, m1, m2, m3) = m
-    return (m0 and m1 and m2 and m3)
+    return m0 and m1 and m2 and m3
 
 def v4select(m, a, b):
     (m0, m1, m2, m3) = m
@@ -540,7 +536,7 @@ def v4subs(a, b):
     return ((a0 - b), (a1 - b), (a2 - b), (a3 - b))
 
 def v4muls(a, b):
-    if (b == 0):
+    if b == 0:
         return V4ZERO
     else:
         (a0, a1, a2, a3) = a
@@ -646,11 +642,11 @@ def m33transpose(m):
 
 def m33determinant(m):
     (m0, m1, m2, m3, m4, m5, m6, m7, m8) = m
-    return (m0 * (m4 * m8 - m5 * m7) + m1 * (m5 * m6 - m3 * m8) + m2 * (m3 * m7 - m4 * m6))
+    return m0 * (m4 * m8 - m5 * m7) + m1 * (m5 * m6 - m3 * m8) + m2 * (m3 * m7 - m4 * m6)
 
 def m33inverse(m):
     det = m33determinant(m)
-    if (det == 0.0):
+    if det == 0.0:
         return ( )
     else:
         (m0, m1, m2, m3, m4, m5, m6, m7, m8) = m
@@ -670,7 +666,7 @@ def m33inversetranspose(m):
     det = (m0 * (m4 * m8 - m5 * m7) +
            m1 * (m5 * m6 - m3 * m8) +
            m2 * (m3 * m7 - m4 * m6))
-    if (det == 0.0):
+    if det == 0.0:
         return ( )
     else:
         detrecp = 1.0 / det
@@ -855,14 +851,14 @@ def m43ortho_normalize(m):
     up    = v3normalize(up)
     at    = v3normalize(at)
 
-    if (innerX > 0.0):
-        if (innerY > 0.0):
-            if (innerZ > 0.0):
+    if innerX > 0.0:
+        if innerY > 0.0:
+            if innerZ > 0.0:
                 outerX = abs(v3dot(up, at))
                 outerY = abs(v3dot(at, right))
                 outerZ = abs(v3dot(right, up))
-                if (outerX < outerY):
-                    if (outerX < outerZ):
+                if outerX < outerY:
+                    if outerX < outerZ:
                         vpU = up
                         vpV = at
                         vpW = right
@@ -871,7 +867,7 @@ def m43ortho_normalize(m):
                         vpV = up
                         vpW = at
                 else:
-                    if (outerY < outerZ):
+                    if outerY < outerZ:
                         vpU = at
                         vpV = right
                         vpW = up
@@ -903,7 +899,7 @@ def m43determinant(m):
 
 def m43inverse(m):
     det = m43determinant(m)
-    if (det == 0.0):
+    if det == 0.0:
         return ( )
     else:
         (m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11) = m
@@ -1117,7 +1113,7 @@ def is_visible_box(center, halfDimensions, vpm):
                 ((t1 + t3) < -(abs(i1 + i3) + abs(j1 + j3) + abs(k1 + k3))) or
                 ((t2 - t3) >  (abs(i2 - i3) + abs(j2 - j3) + abs(k2 - k3))) or
                 ((t2 + t3) < -(abs(i2 + i3) + abs(j2 + j3) + abs(k2 + k3))) or
-               #((t3 - t3) >  (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
+                #((t3 - t3) >  (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
                 ((t3 + t3) < -(abs(i3 + i3) + abs(j3 + j3) + abs(k3 + k3))))
 
 def is_visible_box_origin(halfDimensions, vpm):
@@ -1147,7 +1143,7 @@ def is_visible_box_origin(halfDimensions, vpm):
                 ((t1 + t3) < -(abs(i1 + i3) + abs(j1 + j3) + abs(k1 + k3))) or
                 ((t2 - t3) >  (abs(i2 - i3) + abs(j2 - j3) + abs(k2 - k3))) or
                 ((t2 + t3) < -(abs(i2 + i3) + abs(j2 + j3) + abs(k2 + k3))) or
-               #((t3 - t3) >  (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
+                #((t3 - t3) >  (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
                 ((t3 + t3) < -(abs(i3 + i3) + abs(j3 + j3) + abs(k3 + k3))))
 
 def is_visible_sphere(center, radius, vpm):
@@ -1180,7 +1176,7 @@ def is_visible_sphere(center, radius, vpm):
                 ((t1 + t3) < nradius * (abs(i1 + i3) + abs(j1 + j3) + abs(k1 + k3))) or
                 ((t2 - t3) >  radius * (abs(i2 - i3) + abs(j2 - j3) + abs(k2 - k3))) or
                 ((t2 + t3) < nradius * (abs(i2 + i3) + abs(j2 + j3) + abs(k2 + k3))) or
-               #((t3 - t3) >  radius * (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
+                #((t3 - t3) >  radius * (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
                 ((t3 + t3) < nradius * (abs(i3 + i3) + abs(j3 + j3) + abs(k3 + k3))))
 
 def is_visible_sphere_origin(radius, vpm):
@@ -1211,7 +1207,7 @@ def is_visible_sphere_origin(radius, vpm):
                 ((t1 + t3) < nradius * (abs(i1 + i3) + abs(j1 + j3) + abs(k1 + k3))) or
                 ((t2 - t3) >  radius * (abs(i2 - i3) + abs(j2 - j3) + abs(k2 - k3))) or
                 ((t2 + t3) < nradius * (abs(i2 + i3) + abs(j2 + j3) + abs(k2 + k3))) or
-               #((t3 - t3) >  radius * (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
+                #((t3 - t3) >  radius * (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
                 ((t3 + t3) < nradius * (abs(i3 + i3) + abs(j3 + j3) + abs(k3 + k3))))
 
 def is_visible_sphere_unit(vpm):
@@ -1240,7 +1236,7 @@ def is_visible_sphere_unit(vpm):
                 ((t1 + t3) < -(abs(i1 + i3) + abs(j1 + j3) + abs(k1 + k3))) or
                 ((t2 - t3) >  (abs(i2 - i3) + abs(j2 - j3) + abs(k2 - k3))) or
                 ((t2 + t3) < -(abs(i2 + i3) + abs(j2 + j3) + abs(k2 + k3))) or
-               #((t3 - t3) >  (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
+                #((t3 - t3) >  (abs(i3 - i3) + abs(j3 - j3) + abs(k3 - k3))) or
                 ((t3 + t3) < -(abs(i3 + i3) + abs(j3 + j3) + abs(k3 + k3))))
 
 def transform_box(center, halfExtents, matrix):
@@ -1258,7 +1254,7 @@ def transform_box(center, halfExtents, matrix):
 def plane_normalize(plane):
     (a, b, c, d) = plane
     lsq = ((a * a) + (b * b) + (c * c))
-    if (lsq > 0.0):
+    if lsq > 0.0:
         lr = 1.0 / math.sqrt(lsq)
         return ((a * lr), (b * lr), (c * lr), (d * lr))
     return V4ZERO
@@ -1272,7 +1268,7 @@ def quatis_similar(q1, q2):
     # this compares for similar rotations not raw data
     (_, _, _, w1) = q1
     (_, _, _, w2) = q2
-    if (w1 * w2 < 0.0):
+    if w1 * w2 < 0.0:
         # quaternions in opposing hemispheres, negate one
         q1 = v4mul((-1, -1, -1, -1), q1)
 
@@ -1300,7 +1296,7 @@ def quatmul(q1, q2):
 def quatnormalize(q):
     norme = math.sqrt(quatdot(q, q))
 
-    if (norme == 0.0):
+    if norme == 0.0:
         return V4ZERO
     else:
         recip = 1.0 / norme
@@ -1311,7 +1307,7 @@ def quatconjugate(q):
     return (-x, -y, -z, w)
 
 def quatlerp(q1, q2, t):
-    if (v4dot(q1, q2) > 0.0):
+    if v4dot(q1, q2) > 0.0:
         return v4add(v4muls(v4sub(q2, q1), t), q1)
     else:
         return v4add(v4muls(v4sub(q2, q1), -t), q1)
@@ -1319,11 +1315,11 @@ def quatlerp(q1, q2, t):
 def quatslerp(q1, q2, t):
     cosom = quatdot(q1, q2)
 
-    if (cosom < 0.0):
+    if cosom < 0.0:
         q1 = v4muls(q1, -1.0)
         cosom = -cosom
 
-    if(cosom > math.cos(math.pi / 180.0)):  # use a lerp for angles <= 1 degree
+    if cosom > math.cos(math.pi / 180.0):  # use a lerp for angles <= 1 degree
         return quatnormalize(quatlerp(q1, q2, t))
 
     omega = math.acos(cosom)
@@ -1396,13 +1392,13 @@ def quatfrom_m33(m):
         y = (m6 - m2) / (4*w)
         z = (m1 - m3) / (4*w)
     else:
-        if ((m0 > m4) and (m0 > m8)):
+        if (m0 > m4) and (m0 > m8):
             s = math.sqrt( 1.0 + m0 - m4 - m8 ) * 2 # S=4*qx
             w = (m5 - m7) / s
             x = 0.25 * s
             y = (m3 + m1) / s
             z = (m6 + m2) / s
-        elif (m4 > m8):
+        elif m4 > m8:
             s = math.sqrt( 1.0 + m4 - m0 - m8 ) * 2 # S=4*qy
             w = (m6 - m2) / s
             x = (m3 + m1) / s
@@ -1427,13 +1423,13 @@ def quatfrom_m43(m):
         y = (m6 - m2) / (4*w)
         z = (m1 - m3) / (4*w)
     else:
-        if ((m0 > m4) and (m0 > m8)):
+        if (m0 > m4) and (m0 > m8):
             s = math.sqrt( 1.0 + m0 - m4 - m8 ) * 2 # S=4*qx
             w = (m5 - m7) / s
             x = 0.25 * s
             y = (m3 + m1) / s
             z = (m6 + m2) / s
-        elif (m4 > m8):
+        elif m4 > m8:
             s = math.sqrt( 1.0 + m4 - m0 - m8 ) * 2 # S=4*qy
             w = (m6 - m2) / s
             x = (m3 + m1) / s
@@ -1475,7 +1471,7 @@ def quatposmul(qp1, qp2):
 def quat_from_qx_qy_qz(qx, qy, qz):
     """Calculate the w field of a quaternion."""
     qw = 1.0 - ((qx * qx) + (qy * qy) + (qz * qz))
-    if (qw < 0.0):
+    if qw < 0.0:
         qw = 0.0
     else:
         qw = -math.sqrt(qw)
