@@ -1067,11 +1067,11 @@ class Mesh(object):
                      planar_vertex_count=DEFAULT_PLANAR_HULL_VERTEX_THRESHOLD):
         """Split triangle mesh into set of unconnected convex hulls.
 
-           If max_components != -1, then None will be returned should the number
+           If max_components != -1, then a ValueError will be raised should the number
            of connected components exceed this value.
 
            If allow_non_hulls is False, and any component of the mesh was not able
-           to be converted then None will be returned.
+           to be converted then a ValueError will be raised.
 
            No other vertex data is assumed to exist, and mesh is permitted to be
            mutated.
@@ -1087,7 +1087,8 @@ class Mesh(object):
 
         components = self.connected_components()
         if max_components != -1 and len(components) > max_components:
-            return None
+            raise ValueError("Mesh has %d connected components which is more than specified max of %d" %
+                             (len(components), max_components))
 
         if allow_non_hulls:
             triangles = Mesh()
@@ -1108,7 +1109,7 @@ class Mesh(object):
                     if allow_non_hulls:
                         triangles.extend_mesh(vertices, primitives)
                     else:
-                        return None
+                        raise ValueError("A component of the mesh was not able to be converted")
 
             elif convex and closed:
                 mesh = self.make_convex_hull(vertices)
@@ -1117,7 +1118,7 @@ class Mesh(object):
                         print "Failed to turn convex closed mesh into convex hull!"
                         triangles.extend_mesh(vertices, primitives)
                     else:
-                        return None
+                        raise ValueError("A component of the mesh was not able to be converted")
                 else:
                     # Ensure that convex hull can be re-computed correctly as this will be performed
                     # By WebGL physics device.
@@ -1126,7 +1127,7 @@ class Mesh(object):
                             print "Convex hull failed to be re-computed!"
                             triangles.extend_mesh(vertices, primitives)
                         else:
-                            return None
+                            raise ValueError("A component of the mesh was not able to be converted")
                     else:
                         print "Converted to convex hull!"
                         ret.append(mesh)
@@ -1136,7 +1137,7 @@ class Mesh(object):
                 if allow_non_hulls:
                     triangles.extend_mesh(vertices, primitives)
                 else:
-                    return None
+                    raise ValueError("A component of the mesh was not able to be converted")
 
         if len(triangles.positions) == 0:
             triangles = None

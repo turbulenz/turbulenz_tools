@@ -10,6 +10,11 @@ Turbulenz Python Tools Changes
 1.x-dev
 -------
 
+2014-06-26
+
+- Mesh.convex_hulls now raises a ValueError if the input mesh doesn't meet the specified conversion
+  parameters rather than returning None.
+
 .. _version-1.0.6:
 
 1.0.6
