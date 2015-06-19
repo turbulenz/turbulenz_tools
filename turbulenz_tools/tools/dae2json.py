@@ -2702,7 +2702,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                     if g.type == 'mesh' or g.type == 'convex_mesh':
                         geometries[g.id] = g
             else:
-                LOG.warning('Collada file without:library_geometries:%s', input_filename)
+                LOG.info('Collada file without:library_geometries:%s', input_filename)
 
             lights_e = collada_e.find(tag('library_lights'))
             if lights_e is not None:
@@ -2775,7 +2775,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                     e = Dae2Effect(x, url_handler, name_map, effect_names)
                     effects[e.id] = e
             else:
-                LOG.warning('Collada file without:library_effects:%s', input_filename)
+                LOG.info('Collada file without:library_effects:%s', input_filename)
                 # json.AddObject("default")
                 # json.AddString("type", "lambert")
 
@@ -2785,7 +2785,7 @@ def parse(input_filename="default.dae", output_filename="default.json", asset_ur
                     m = Dae2Material(x, name_map)
                     materials[m.id] = m
             else:
-                LOG.warning('Collada file without:library_materials:%s', input_filename)
+                LOG.info('Collada file without:library_materials:%s', input_filename)
                 # json.AddObject("default")
                 # json.AddString("effect", "default")
 
