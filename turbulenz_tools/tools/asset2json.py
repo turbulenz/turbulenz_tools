@@ -429,9 +429,9 @@ class JsonAsset(object):
         LOG.debug("%s:skeleton added", name)
         if name in self.asset['skeletons']:
             existing_skeleton = self.asset['skeletons'][name]
-            assert(skeleton['numNodes'] == existing_skeleton['numNodes'])
-            assert(skeleton['names'] == existing_skeleton['names'])
-            assert(skeleton['parents'] == existing_skeleton['parents'])
+            assert skeleton['numNodes'] == existing_skeleton['numNodes']
+            assert skeleton['names'] == existing_skeleton['names']
+            assert skeleton['parents'] == existing_skeleton['parents']
             for i in range(skeleton['numNodes']):
                 if vmath.m43is_identity(existing_skeleton['invBoneLTMs'][i]):
                     existing_skeleton['invBoneLTMs'][i] = skeleton['invBoneLTMs'][i]
