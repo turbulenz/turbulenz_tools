@@ -10,8 +10,14 @@ Turbulenz Python Tools Changes
 1.x-dev
 -------
 
-2014-06-26
+.. _version-1.0.7:
 
+1.0.7
+-----
+
+:release-date: 2015-08-26
+
+- Update some Collada conversion warnings to infos
 - Mesh.convex_hulls now raises a ValueError if the input mesh doesn't meet the specified conversion
   parameters rather than returning None.
 
